@@ -10,7 +10,7 @@
  */
 package com.laex.j2objc.preferences;
 
-import j2objc_plugin_eclipse.Activator;
+import j2objc_eclipse_plugin.Activator;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;

@@ -10,7 +10,7 @@
  */
 package com.laex.j2objc.preferences;
 
-import j2objc_plugin_eclipse.Activator;
+import j2objc_eclipse_plugin.Activator;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;

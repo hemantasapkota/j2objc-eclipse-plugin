@@ -10,7 +10,7 @@
  */
 package com.laex.j2objc;
 
-import j2objc_plugin_eclipse.Activator;
+import j2objc_eclipse_plugin.Activator;
 
 import java.util.Map;
 
