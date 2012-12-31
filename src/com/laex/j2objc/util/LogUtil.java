@@ -21,8 +21,9 @@ public final class LogUtil {
 
     /**
      * Log exception.
-     *
-     * @param e the e
+     * 
+     * @param e
+     *            the e
      */
     public static void logException(Exception e) {
         Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.getMessage()));

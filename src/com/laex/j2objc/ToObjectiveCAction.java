@@ -39,7 +39,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
 
     /** The target part. */
     IWorkbenchPart targetPart = null;
-    
+
     /** The struc selc. */
     IStructuredSelection strucSelc = null;
 
@@ -49,7 +49,9 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
     public ToObjectiveCAction() {
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
@@ -76,7 +78,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                     ToObjectiveCDelegate del = new ToObjectiveCDelegate(props, monitor);
                     elm.getResource().accept(del);
 
-                    //refresh
+                    // refresh
                     javaProject.getResource().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     monitor.worked(1);
                     monitor.done();
@@ -88,22 +90,30 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                 return Status.OK_STATUS;
             }
         };
-        
+
         job.setUser(true);
         job.schedule();
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+     * .IAction, org.eclipse.jface.viewers.ISelection)
      */
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         this.strucSelc = (IStructuredSelection) selection;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
+     * action.IAction, org.eclipse.ui.IWorkbenchPart)
      */
     @Override
     public void setActivePart(IAction action, IWorkbenchPart targetPart) {

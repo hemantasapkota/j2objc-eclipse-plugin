@@ -43,82 +43,82 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The composite_2. */
     private Composite composite_2;
-    
+
     /** The btn generate debug support. */
     private Button btnGenerateDebugSupport;
-    
+
     /** The btn no package dir. */
     private Button btnNoPackageDir;
-    
+
     /** The btn lang objective c. */
     private Button btnLangObjectiveC;
-    
+
     /** The btn lang objective cpp. */
     private Button btnLangObjectiveCPP;
-    
+
     /** The btn mem manual ref. */
     private Button btnMemManualRef;
-    
+
     /** The btn mem gc. */
     private Button btnMemGC;
-    
+
     /** The btn make errors to warnings. */
     private Button btnMakeErrorsToWarnings;
-    
+
     /** The btn quiet. */
     private Button btnQuiet;
-    
+
     /** The btn verbose. */
     private Button btnVerbose;
-    
+
     /** The btn no inline field access. */
     private Button btnNoInlineFieldAccess;
-    
+
     /** The btn no generate test main. */
     private Button btnNoGenerateTestMain;
-    
+
     /** The btn print converted sources. */
     private Button btnPrintConvertedSources;
-    
+
     /** The btn timing info. */
     private Button btnTimingInfo;
-    
+
     /** The btn mem arc. */
     private Button btnMemARC;
-    
+
     /** The grp others. */
     private Group grpOthers;
-    
+
     /** The btn ignore missing imports. */
     private Button btnIgnoreMissingImports;
-    
+
     /** The grp proguard dead code. */
     private Group grpProguardDeadCode;
-    
+
     /** The txt proguard file. */
     private Text txtProguardFile;
-    
+
     /** The btn browse pro guard file. */
     private Button btnBrowseProGuardFile;
-    
+
     /** The txt method mapping file. */
     private Text txtMethodMappingFile;
-    
+
     /** The btn browse method mapping. */
     private Button btnBrowseMethodMapping;
-    
+
     /** The txt bootpath. */
     private Text txtBootpath;
-    
+
     /** The btn bootpath browse. */
     private Button btnBootpathBrowse;
-    
+
     /** The lbl proguard dead code. */
     private Label lblProguardDeadCode;
-    
+
     /** The lbl method mapping file. */
     private Label lblMethodMappingFile;
-    
+
     /** The lbl bootclasspath. */
     private Label lblBootclasspath;
 
@@ -129,8 +129,12 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
+     * .swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
         composite_2 = new Composite(parent, SWT.NONE);
@@ -349,18 +353,20 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Gets the project.
-     *
+     * 
      * @return the project
      */
     private IResource getProject() {
         return ((IJavaElement) getElement()).getResource();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     protected void performDefaults() {
-        Map<String, String> defaultPrefs = constructDefaultPrefsMap();
+        Map<String, String> defaultPrefs = PropertiesUtil.constructDefaultPreferences();
 
         try {
             PropertiesUtil.persistProperties(getProject(), defaultPrefs);
@@ -372,7 +378,9 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         super.performDefaults();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performOk()
      */
     public boolean performOk() {
@@ -390,8 +398,9 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Update default prefs in ui.
-     *
-     * @param defaultPrefs the default prefs
+     * 
+     * @param defaultPrefs
+     *            the default prefs
      */
     private void updateDefaultPrefsInUI(Map<String, String> defaultPrefs) {
         btnGenerateDebugSupport.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT)));
@@ -417,47 +426,15 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
     }
 
     /**
-     * Construct default prefs map.
-     *
-     * @return the map
-     */
-    private Map<String, String> constructDefaultPrefsMap() {
-        Map<String, String> prefMap = new HashMap<String, String>();
-
-        prefMap.put(PreferenceConstants.INITIALIZE_FIRST_TIME, Boolean.TRUE.toString());
-
-        prefMap.put(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT, Boolean.TRUE.toString());
-        prefMap.put(PreferenceConstants.NO_PACKAGE_DIRECTORIES, Boolean.TRUE.toString());
-
-        prefMap.put(PreferenceConstants.X_LANGUAGE_OBJECTIVE_C, Boolean.TRUE.toString());
-        prefMap.put(PreferenceConstants.X_LANGUAGE_OBJECTIVE_CPP, Boolean.FALSE.toString());
-
-        // Memory OPtions
-        prefMap.put(PreferenceConstants.USE_REFERENCE_COUNTING, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.USE_ARC, Boolean.TRUE.toString());
-        prefMap.put(PreferenceConstants.USE_GC, Boolean.FALSE.toString());
-
-        prefMap.put(PreferenceConstants.ERROR_TO_WARNING, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.QUIET, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.VERBOSE, Boolean.TRUE.toString());
-
-        prefMap.put(PreferenceConstants.NO_INLINE_FIELD_ACCESS, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.NO_GENERATE_TEST_MAIN, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.TRUE.toString());
-        prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.FALSE.toString());
-
-        return prefMap;
-
-    }
-
-    /**
      * Construct pref map.
-     *
+     * 
      * @return the map
      */
     private Map<String, String> constructPrefMap() {
         Map<String, String> prefMap = new HashMap<String, String>();
+        
+        //indicate that this project has its properties set
+        prefMap.put(PreferenceConstants.INITIALIZE_FIRST_TIME, Boolean.TRUE.toString());
 
         prefMap.put(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT, Boolean.toString(btnGenerateDebugSupport.getSelection()));
         prefMap.put(PreferenceConstants.NO_PACKAGE_DIRECTORIES, Boolean.toString(btnNoPackageDir.getSelection()));
@@ -489,8 +466,9 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Populate properties.
-     *
-     * @throws CoreException the core exception
+     * 
+     * @throws CoreException
+     *             the core exception
      */
     private void populateProperties() throws CoreException {
         Map<String, String> prefs = PropertiesUtil.getProjectProperties(getProject());

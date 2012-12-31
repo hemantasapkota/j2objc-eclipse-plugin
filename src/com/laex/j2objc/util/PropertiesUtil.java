@@ -31,9 +31,11 @@ public class PropertiesUtil {
 
     /**
      * Checks for property.
-     *
-     * @param key the key
-     * @param prefs the prefs
+     * 
+     * @param key
+     *            the key
+     * @param prefs
+     *            the prefs
      * @return true, if successful
      */
     public static boolean hasProperty(String key, Map<String, String> prefs) {
@@ -45,9 +47,11 @@ public class PropertiesUtil {
 
     /**
      * Checks for text property.
-     *
-     * @param key the key
-     * @param prefs the prefs
+     * 
+     * @param key
+     *            the key
+     * @param prefs
+     *            the prefs
      * @return true, if successful
      */
     public static boolean hasTextProperty(String key, Map<String, String> prefs) {
@@ -60,10 +64,12 @@ public class PropertiesUtil {
 
     /**
      * Checks if is default properties set.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return true, if is default properties set
-     * @throws CoreException the core exception
+     * @throws CoreException
+     *             the core exception
      */
     public static boolean isDefaultPropertiesSet(IResource prj) throws CoreException {
         String firstTimer = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_DEBUGGING_SUPPORT));
@@ -72,8 +78,9 @@ public class PropertiesUtil {
 
     /**
      * Gets the prefix properties file.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return the prefix properties file
      */
     public static final String getPrefixPropertiesFile(IProject prj) {
@@ -84,8 +91,9 @@ public class PropertiesUtil {
 
     /**
      * Does exist prefix properties file.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return true, if successful
      */
     public static boolean doesExistPrefixPropertiesFile(IProject prj) {
@@ -96,10 +104,12 @@ public class PropertiesUtil {
 
     /**
      * Gets the classpath entries.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return the classpath entries
-     * @throws CoreException the core exception
+     * @throws CoreException
+     *             the core exception
      */
     public static List<String> getClasspathEntries(IResource prj) throws CoreException {
         String classpathEntriesString = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.CLASSPAPTH));
@@ -126,10 +136,13 @@ public class PropertiesUtil {
 
     /**
      * Persist classpath entries.
-     *
-     * @param prj the prj
-     * @param classpath the classpath
-     * @throws CoreException the core exception
+     * 
+     * @param prj
+     *            the prj
+     * @param classpath
+     *            the classpath
+     * @throws CoreException
+     *             the core exception
      */
     public static void persistClasspathEntries(IResource prj, List<String> classpath) throws CoreException {
         StringBuilder commaSeperatedValue = new StringBuilder();
@@ -143,14 +156,52 @@ public class PropertiesUtil {
         prj.setPersistentProperty(qkey(PreferenceConstants.CLASSPAPTH), commaSeperatedValue.toString());
     }
 
+    public static Map<String, String> constructDefaultPreferences() {
+        Map<String, String> prefMap = new HashMap<String, String>();
+
+        prefMap.put(PreferenceConstants.INITIALIZE_FIRST_TIME, Boolean.TRUE.toString());
+
+        prefMap.put(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT, Boolean.TRUE.toString());
+        prefMap.put(PreferenceConstants.NO_PACKAGE_DIRECTORIES, Boolean.TRUE.toString());
+
+        prefMap.put(PreferenceConstants.X_LANGUAGE_OBJECTIVE_C, Boolean.TRUE.toString());
+        prefMap.put(PreferenceConstants.X_LANGUAGE_OBJECTIVE_CPP, Boolean.FALSE.toString());
+
+        // Memory OPtions
+        prefMap.put(PreferenceConstants.USE_REFERENCE_COUNTING, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.USE_ARC, Boolean.TRUE.toString());
+        prefMap.put(PreferenceConstants.USE_GC, Boolean.FALSE.toString());
+
+        prefMap.put(PreferenceConstants.ERROR_TO_WARNING, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.QUIET, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.VERBOSE, Boolean.TRUE.toString());
+
+        prefMap.put(PreferenceConstants.NO_INLINE_FIELD_ACCESS, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.NO_GENERATE_TEST_MAIN, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.TRUE.toString());
+        prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.FALSE.toString());
+
+        return prefMap;
+
+    }
+
     /**
      * Gets the project properties.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return the project properties
-     * @throws CoreException the core exception
+     * @throws CoreException
+     *             the core exception
      */
     public static Map<String, String> getProjectProperties(IResource prj) throws CoreException {
+        
+        //are we running the translation for the first time ?, if so return default preferences
+        String hasAnyPropertiesBeenSet = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.INITIALIZE_FIRST_TIME));
+        if (hasAnyPropertiesBeenSet == null) {
+            return constructDefaultPreferences();
+        }
 
         String generateDebugSupport = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_DEBUGGING_SUPPORT));
         String noPackageDirectories = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.NO_PACKAGE_DIRECTORIES));
@@ -213,10 +264,13 @@ public class PropertiesUtil {
 
     /**
      * Persist properties.
-     *
-     * @param prj the prj
-     * @param prefs the prefs
-     * @throws CoreException the core exception
+     * 
+     * @param prj
+     *            the prj
+     * @param prefs
+     *            the prefs
+     * @throws CoreException
+     *             the core exception
      */
     public static void persistProperties(IResource prj, Map<String, String> prefs) throws CoreException {
 
@@ -251,8 +305,9 @@ public class PropertiesUtil {
 
     /**
      * Qkey.
-     *
-     * @param val the val
+     * 
+     * @param val
+     *            the val
      * @return the qualified name
      */
     private static QualifiedName qkey(String val) {

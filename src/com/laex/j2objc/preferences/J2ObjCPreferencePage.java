@@ -21,8 +21,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * The Class J2ObjCPreferencePage.
  */
 
-public class J2ObjCPreferencePage extends FieldEditorPreferencePage implements
-        IWorkbenchPreferencePage {
+public class J2ObjCPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
     /**
      * Instantiates a new j2 obj c preference page.
@@ -34,12 +33,15 @@ public class J2ObjCPreferencePage extends FieldEditorPreferencePage implements
         setDescription("");
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
+     * ()
      */
     public void createFieldEditors() {
-        addField(new DirectoryFieldEditor(PreferenceConstants.PATH_TO_COMPILER,
-                "&Path to Compiler", getFieldEditorParent()));
+        addField(new DirectoryFieldEditor(PreferenceConstants.PATH_TO_COMPILER, "&Path to Compiler", getFieldEditorParent()));
     }
 
     /*

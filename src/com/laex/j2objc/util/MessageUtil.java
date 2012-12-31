@@ -21,8 +21,9 @@ public final class MessageUtil {
 
     /**
      * Message remove items.
-     *
-     * @param shell the shell
+     * 
+     * @param shell
+     *            the shell
      * @return the int
      */
     public static int messageRemoveItems(Shell shell) {

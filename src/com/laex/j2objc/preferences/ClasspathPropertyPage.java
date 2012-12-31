@@ -54,10 +54,10 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /** The table. */
     private Table table;
-    
+
     /** The selections. */
     private List<String> selections;
-    
+
     /** The table viewer. */
     private TableViewer tableViewer;
 
@@ -65,16 +65,24 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      * The Class TableLabelProvider.
      */
     private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
+         * .lang.Object, int)
          */
         public Image getColumnImage(Object element, int columnIndex) {
             return new SharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
+         * lang.Object, int)
          */
         public String getColumnText(Object element, int columnIndex) {
             if (columnIndex == 0)
@@ -88,22 +96,32 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      * The Class ContentProvider.
      */
     private class ContentProvider implements IStructuredContentProvider {
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
+         * java.lang.Object)
          */
         public Object[] getElements(Object inputElement) {
             return selections.toArray();
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
         public void dispose() {
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+         * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
@@ -115,8 +133,12 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     public ClasspathPropertyPage() {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
+     * .swt.widgets.Composite)
      */
     @Override
     public Control createContents(Composite parent) {
@@ -223,7 +245,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         tableViewer.refresh();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performOk()
      */
     @Override
@@ -241,8 +265,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /**
      * Load classpaths.
-     *
-     * @throws CoreException the core exception
+     * 
+     * @throws CoreException
+     *             the core exception
      */
     private void loadClasspaths() throws CoreException {
         IJavaElement javaPrj = (IJavaElement) getElement();

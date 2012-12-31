@@ -63,9 +63,13 @@ public class PackagePrefixPropertyPage extends PropertyPage {
      * The Class TableLabelProvider.
      */
     private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
+         * .lang.Object, int)
          */
         public Image getColumnImage(Object element, int columnIndex) {
             if (columnIndex == 0)
@@ -74,8 +78,12 @@ public class PackagePrefixPropertyPage extends PropertyPage {
             return null;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
+         * lang.Object, int)
          */
         public String getColumnText(Object element, int columnIndex) {
             if (columnIndex == 0)
@@ -93,21 +101,31 @@ public class PackagePrefixPropertyPage extends PropertyPage {
      */
     private class ContentProvider implements IStructuredContentProvider {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
+         * java.lang.Object)
          */
         public Object[] getElements(Object inputElement) {
             return ((Set<String>) inputElement).toArray();
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
         public void dispose() {
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+         * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
@@ -115,13 +133,13 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /** The table. */
     private Table table;
-    
+
     /** The table viewer. */
     private TableViewer tableViewer;
 
     /** The pkg list. */
     private Set<String> pkgList;
-    
+
     /** The pkg prefix. */
     private Properties pkgPrefix = new Properties();
 
@@ -131,8 +149,12 @@ public class PackagePrefixPropertyPage extends PropertyPage {
     public PackagePrefixPropertyPage() {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
+     * .swt.widgets.Composite)
      */
     @Override
     public Control createContents(Composite parent) {
@@ -207,7 +229,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
      */
     protected void resetAll() {
         int resp = MessageUtil.messageRemoveItems(getShell());
-        
+
         if (resp == SWT.OK) {
             Set<Object> keys = pkgPrefix.keySet();
             for (Object key : keys) {
@@ -219,7 +241,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the selected package.
-     *
+     * 
      * @return the selected package
      */
     private String getSelectedPackage() {
@@ -252,8 +274,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Load packages.
-     *
-     * @throws CoreException the core exception
+     * 
+     * @throws CoreException
+     *             the core exception
      */
     private void loadPackages() throws CoreException {
         IJavaProject proj = (IJavaProject) getElement();
@@ -265,14 +288,15 @@ public class PackagePrefixPropertyPage extends PropertyPage {
             public boolean visit(IResource resource) throws CoreException {
                 if (JavaCore.isJavaLikeFileName(resource.getName())) {
                     ICompilationUnit compU = JavaCore.createCompilationUnitFrom((IFile) resource);
-                    
-                    //Wrap with exception, in case the project does not have any pacakgaes declared
+
+                    // Wrap with exception, in case the project does not have
+                    // any pacakgaes declared
                     try {
                         pkgList.add(compU.getPackageDeclarations()[0].getElementName());
                     } catch (ArrayIndexOutOfBoundsException aiobx) {
                         LogUtil.logException(aiobx);
                     }
-                    
+
                 }
                 return true;
             }
@@ -301,7 +325,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performOk()
      */
     @Override
@@ -310,15 +336,15 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
         String propertiesFilePath = getPropertiesFileName(javaProject);
         IFile propertiesFile = javaProject.getProject().getFile(propertiesFilePath);
-        
+
         if (propertiesFile.exists()) {
-            
+
             try {
                 propertiesFile.delete(true, null);
             } catch (CoreException e) {
                 e.printStackTrace();
             }
-            
+
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -338,8 +364,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the properties file name.
-     *
-     * @param javaProject the java project
+     * 
+     * @param javaProject
+     *            the java project
      * @return the properties file name
      */
     private String getPropertiesFileName(IJavaProject javaProject) {

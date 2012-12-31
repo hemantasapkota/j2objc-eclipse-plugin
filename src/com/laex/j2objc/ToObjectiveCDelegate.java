@@ -40,25 +40,28 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /** The prefs. */
     private Map<String, String> prefs;
-    
+
     /** The monitor. */
     private IProgressMonitor monitor;
 
     /**
      * Instantiates a new to objective c delegate.
-     *
-     * @param prefs the prefs
-     * @param monitor the monitor
+     * 
+     * @param prefs
+     *            the prefs
+     * @param monitor
+     *            the monitor
      */
-    public ToObjectiveCDelegate(Map<String, String> prefs, IProgressMonitor monitor) {
+    public ToObjectiveCDelegate(Map<String, String> prefs,  IProgressMonitor monitor) {
         this.prefs = prefs;
         this.monitor = monitor;
     }
 
     /**
      * Find console.
-     *
-     * @param name the name
+     * 
+     * @param name
+     *            the name
      * @return the message console
      */
     private MessageConsole findConsole(String name) {
@@ -76,18 +79,23 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Builds the command.
-     *
-     * @param prefs the prefs
-     * @param project the project
-     * @param sourcePath the source path
-     * @param outputPath the output path
+     * 
+     * @param prefs
+     *            the prefs
+     * @param project
+     *            the project
+     * @param sourcePath
+     *            the source path
+     * @param outputPath
+     *            the output path
      * @return the string
-     * @throws CoreException the core exception
+     * @throws CoreException
+     *             the core exception
      */
     private String buildCommand(Map<String, String> prefs, IProject project, String sourcePath, String outputPath) throws CoreException {
         StringBuilder sb = new StringBuilder();
 
-        //Create platform indenpendent path and append the path to the compiler
+        // Create platform indenpendent path and append the path to the compiler
         IPath pathToCompiler = new Path(prefs.get(PreferenceConstants.PATH_TO_COMPILER)).append(PreferenceConstants.J2_OBJC_COMPILER);
         sb.append(pathToCompiler.toOSString()).append(" ");
 
@@ -163,8 +171,12 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         return sb.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources
+     * .IResource)
      */
     @Override
     public boolean visit(final IResource resource) throws CoreException {
