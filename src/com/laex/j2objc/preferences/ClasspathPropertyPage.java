@@ -39,6 +39,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
@@ -51,7 +52,6 @@ import org.eclipse.ui.internal.SharedImages;
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.MessageUtil;
 import com.laex.j2objc.util.PropertiesUtil;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * The Class ClasspathPropertyPage.
@@ -62,7 +62,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     private Table table;
 
     /** The selections. */
-    private List<String> selections;
+    private List<String> selections = new ArrayList<String>();
 
     /** The table viewer. */
     private TableViewer tableViewer;
@@ -299,8 +299,6 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         if (response == ContainerSelectionDialog.CANCEL) {
             return;
         }
-
-        selections = new ArrayList<String>();
 
         for (Object o : csd.getResult()) {
             IPath path = (IPath) o;
