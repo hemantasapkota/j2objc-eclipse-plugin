@@ -26,10 +26,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.SharedImages;
 import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -143,6 +145,10 @@ public class PackagePrefixPropertyPage extends PropertyPage {
     /** The pkg prefix. */
     private Properties pkgPrefix = new Properties();
 
+    private Button btnEdit;
+
+    private Button btnReset;
+
     /**
      * Instantiates a new package prefix property page.
      */
@@ -162,6 +168,12 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         container.setLayout(new GridLayout(2, false));
 
         tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                onSelectionChanged(event);
+            }
+        });
         table = tableViewer.getTable();
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -184,7 +196,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         composite.setLayout(new RowLayout(SWT.VERTICAL));
         composite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false, 1, 1));
 
-        Button btnEdit = new Button(composite, SWT.NONE);
+        btnEdit = new Button(composite, SWT.NONE);
         btnEdit.setLayoutData(new RowData(76, SWT.DEFAULT));
         btnEdit.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -193,8 +205,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
             }
         });
         btnEdit.setText("Edit");
+        btnEdit.setEnabled(false);
 
-        Button btnReset = new Button(composite, SWT.NONE);
+        btnReset = new Button(composite, SWT.NONE);
         btnReset.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -203,6 +216,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         });
         btnReset.setLayoutData(new RowData(76, SWT.DEFAULT));
         btnReset.setText("Reset");
+        btnReset.setEnabled(false);
 
         Button btnResetAll = new Button(composite, SWT.NONE);
         btnResetAll.addSelectionListener(new SelectionAdapter() {
@@ -222,6 +236,16 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         }
 
         return container;
+    }
+
+    protected void onSelectionChanged(SelectionChangedEvent event) {
+        if (event.getSelection().isEmpty()) {
+            btnEdit.setEnabled(false);
+            btnReset.setEnabled(false);
+        } else {
+            btnEdit.setEnabled(true);
+            btnReset.setEnabled(true);
+        }
     }
 
     /**

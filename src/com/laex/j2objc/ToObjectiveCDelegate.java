@@ -103,8 +103,10 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         if (!classpath.isEmpty()) {
             sb.append(PreferenceConstants.CLASSPAPTH).append(" ");
             for (String s : classpath) {
-                sb.append(s).append(" ");
+                sb.append(s).append(":");
             }
+            
+            sb.append(" ");
         }
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT, prefs))

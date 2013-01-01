@@ -16,13 +16,15 @@ import java.util.List;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.internal.ui.SharedImages;
-import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -39,13 +41,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.internal.SharedImages;
 
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.MessageUtil;
 import com.laex.j2objc.util.PropertiesUtil;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * The Class ClasspathPropertyPage.
@@ -61,6 +67,8 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     /** The table viewer. */
     private TableViewer tableViewer;
 
+    private Button btnRemove;
+
     /**
      * The Class TableLabelProvider.
      */
@@ -74,7 +82,11 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
          * .lang.Object, int)
          */
         public Image getColumnImage(Object element, int columnIndex) {
-            return new SharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
+            if (element.toString().endsWith("jar")) {
+                return new  org.eclipse.jdt.internal.ui.SharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+            }
+
+            return new SharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
         }
 
         /*
@@ -131,6 +143,8 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      * Instantiates a new classpath property page.
      */
     public ClasspathPropertyPage() {
+        setDescription("");
+        setMessage("J2OBJC Preferences");
     }
 
     /*
@@ -146,6 +160,12 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         container.setLayout(new GridLayout(2, false));
 
         tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                onSelectionChanged(event);
+            }
+        });
         table = tableViewer.getTable();
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -172,7 +192,17 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         });
         btnAddClasspath.setText("Add");
 
-        Button btnRemove = new Button(composite, SWT.NONE);
+        Button btnAddJar = new Button(composite, SWT.NONE);
+        btnAddJar.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                addReferencedClasspath();
+            }
+        });
+        btnAddJar.setLayoutData(new RowData(88, SWT.DEFAULT));
+        btnAddJar.setText("Add JAR");
+
+        btnRemove = new Button(composite, SWT.NONE);
         btnRemove.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -181,6 +211,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         });
         btnRemove.setLayoutData(new RowData(88, SWT.DEFAULT));
         btnRemove.setText("Remove");
+        btnRemove.setEnabled(false);
 
         Button btnRemoveAll = new Button(composite, SWT.NONE);
         btnRemoveAll.addSelectionListener(new SelectionAdapter() {
@@ -190,6 +221,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
             }
         });
         btnRemoveAll.setText("Remove All");
+        
+        Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        label.setLayoutData(new RowData(86, 6));
 
         // load
         try {
@@ -199,6 +233,39 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         }
 
         return container;
+    }
+
+    protected void addReferencedClasspath() {
+        IJavaElement elm = (IJavaElement) getElement();
+        try {
+            IClasspathEntry[] refClasspath = elm.getJavaProject().getResolvedClasspath(true);
+            ElementListSelectionDialog elsd = new ElementListSelectionDialog(getShell(), new LabelProvider());
+            elsd.setElements(refClasspath);
+
+            int response = elsd.open();
+            if (response == ElementListSelectionDialog.CANCEL) {
+                return;
+            }
+
+            Object[] selected = elsd.getResult();
+            for (Object o : selected) {
+                IClasspathEntry entry = (IClasspathEntry) o;
+                selections.add(entry.getPath().makeAbsolute().toOSString());
+            }
+
+            tableViewer.refresh();
+
+        } catch (JavaModelException e) {
+            LogUtil.logException(e);
+        }
+    }
+
+    private void onSelectionChanged(SelectionChangedEvent event) {
+        if (event.getSelection().isEmpty()) {
+            btnRemove.setEnabled(false);
+        } else {
+            btnRemove.setEnabled(true);
+        }
     }
 
     /**
@@ -275,5 +342,6 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
         tableViewer.setInput(selections);
         tableViewer.refresh();
+
     }
 }
