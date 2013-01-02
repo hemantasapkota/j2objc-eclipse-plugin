@@ -10,22 +10,29 @@
  */
 package com.laex.j2objc.preferences;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -39,13 +46,11 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.internal.SharedImages;
 
@@ -58,16 +63,17 @@ import com.laex.j2objc.util.PropertiesUtil;
  */
 public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
 
+    /** The classpath ref. */
+    private Set<String> classpathRef = new HashSet<String>();
+
+    /** The btn remove. */
+    private Button btnRemove;
+    
     /** The table. */
     private Table table;
 
-    /** The selections. */
-    private List<String> selections = new ArrayList<String>();
-
-    /** The table viewer. */
-    private TableViewer tableViewer;
-
-    private Button btnRemove;
+    /** The checkbox table viewer. */
+    private CheckboxTableViewer checkboxTableViewer;
 
     /**
      * The Class TableLabelProvider.
@@ -82,8 +88,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
          * .lang.Object, int)
          */
         public Image getColumnImage(Object element, int columnIndex) {
-            if (element.toString().endsWith("jar")) {
-                return new  org.eclipse.jdt.internal.ui.SharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+            String elm = (String) element;
+            if (elm.endsWith("jar") || elm.endsWith("zip")) {
+                return new org.eclipse.jdt.internal.ui.SharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
             }
 
             return new SharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -97,43 +104,34 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
          * lang.Object, int)
          */
         public String getColumnText(Object element, int columnIndex) {
-            if (columnIndex == 0)
-                return (String) element;
+            return (String) element;
 
-            return null;
         }
     }
 
     /**
      * The Class ContentProvider.
      */
-    private class ContentProvider implements IStructuredContentProvider {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
-         * java.lang.Object)
+    private class ContentProvider implements IStructuredContentProvider {
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
          */
         public Object[] getElements(Object inputElement) {
-            return selections.toArray();
+            Object[] o = ((Set<String>) inputElement).toArray();
+            Arrays.sort(o);
+            return o;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
+        /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
         public void dispose() {
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
-         * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
@@ -159,28 +157,21 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         Composite container = new Composite(parent, SWT.NULL);
         container.setLayout(new GridLayout(2, false));
 
-        tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
-        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                onSelectionChanged(event);
-            }
-        });
-        table = tableViewer.getTable();
-        table.setLinesVisible(true);
+        checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
+        table = checkboxTableViewer.getTable();
         table.setHeaderVisible(true);
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+        gd_table.heightHint = 400;
+        table.setLayoutData(gd_table);
 
-        TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-        TableColumn tblclmnName = tableViewerColumn.getColumn();
-        tblclmnName.setWidth(257);
-        tblclmnName.setText("Name");
-        tableViewer.setLabelProvider(new TableLabelProvider());
-        tableViewer.setContentProvider(new ContentProvider());
+        TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+        TableColumn tblclmnClasspath = tableViewerColumn.getColumn();
+        tblclmnClasspath.setWidth(295);
+        tblclmnClasspath.setText("Classpath");
 
         Composite composite = new Composite(container, SWT.NONE);
+        composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
         composite.setLayout(new RowLayout(SWT.VERTICAL));
-        composite.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
 
         Button btnAddClasspath = new Button(composite, SWT.NONE);
         btnAddClasspath.setLayoutData(new RowData(88, SWT.DEFAULT));
@@ -191,16 +182,6 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
             }
         });
         btnAddClasspath.setText("Add");
-
-        Button btnAddJar = new Button(composite, SWT.NONE);
-        btnAddJar.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                addReferencedClasspath();
-            }
-        });
-        btnAddJar.setLayoutData(new RowData(88, SWT.DEFAULT));
-        btnAddJar.setText("Add JAR");
 
         btnRemove = new Button(composite, SWT.NONE);
         btnRemove.addSelectionListener(new SelectionAdapter() {
@@ -221,61 +202,62 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
             }
         });
         btnRemoveAll.setText("Remove All");
-        
-        Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-        label.setLayoutData(new RowData(86, 6));
+
+        checkboxTableViewer.setContentProvider(new ContentProvider());
+        checkboxTableViewer.setLabelProvider(new TableLabelProvider());
 
         // load
         try {
-            loadClasspaths();
+            loadProjectReferencedClasspaths();
+            loadUserSelectedClasspaths();
         } catch (CoreException e1) {
+            LogUtil.logException(e1);
+        } catch (IOException e1) {
             LogUtil.logException(e1);
         }
 
         return container;
     }
 
-    protected void addReferencedClasspath() {
+    /**
+     * Load project referenced classpaths.
+     */
+    private void loadProjectReferencedClasspaths() {
         IJavaElement elm = (IJavaElement) getElement();
         try {
             IClasspathEntry[] refClasspath = elm.getJavaProject().getResolvedClasspath(true);
-            ElementListSelectionDialog elsd = new ElementListSelectionDialog(getShell(), new LabelProvider());
-            elsd.setElements(refClasspath);
-
-            int response = elsd.open();
-            if (response == ElementListSelectionDialog.CANCEL) {
-                return;
-            }
-
-            Object[] selected = elsd.getResult();
-            for (Object o : selected) {
+            for (IClasspathEntry o : refClasspath) {
                 IClasspathEntry entry = (IClasspathEntry) o;
-                selections.add(entry.getPath().makeAbsolute().toOSString());
+                String path = entry.getPath().makeAbsolute().toOSString();
+
+                // some path may be folders. In that case, we have to make sure
+                // we store the full absolute path to the folders
+                boolean isArchive = path.endsWith("jar") || path.endsWith("zip");
+                if (!isArchive) {
+                    IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path(path));
+                    if (folder.exists()) {
+                        path = folder.getLocation().makeAbsolute().toOSString();
+                    }
+                }
+
+                classpathRef.add(path);
             }
 
-            tableViewer.refresh();
-
+            checkboxTableViewer.setInput(classpathRef);
+            checkboxTableViewer.refresh();
         } catch (JavaModelException e) {
             LogUtil.logException(e);
-        }
-    }
-
-    private void onSelectionChanged(SelectionChangedEvent event) {
-        if (event.getSelection().isEmpty()) {
-            btnRemove.setEnabled(false);
-        } else {
-            btnRemove.setEnabled(true);
         }
     }
 
     /**
      * Removes the selection.
      */
-    protected void removeSelection() {
-        IStructuredSelection iss = (IStructuredSelection) tableViewer.getSelection();
+    private void removeSelection() {
+        IStructuredSelection iss = (IStructuredSelection) checkboxTableViewer.getSelection();
         String res = (String) iss.getFirstElement();
-        selections.remove(res);
-        tableViewer.refresh();
+        classpathRef.remove(res);
+        checkboxTableViewer.refresh();
     }
 
     /**
@@ -284,8 +266,8 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     protected void removeAll() {
         int resp = MessageUtil.messageRemoveItems(getShell());
         if (resp == SWT.OK) {
-            selections.clear();
-            tableViewer.refresh();
+            classpathRef.clear();
+            checkboxTableViewer.refresh();
         }
     }
 
@@ -303,11 +285,10 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         for (Object o : csd.getResult()) {
             IPath path = (IPath) o;
             String s = ResourcesPlugin.getWorkspace().getRoot().getFolder(path).getLocation().makeAbsolute().toOSString();
-            selections.add(s);
+            classpathRef.add(s);
         }
 
-        tableViewer.setInput(selections);
-        tableViewer.refresh();
+        checkboxTableViewer.refresh();
     }
 
     /*
@@ -319,27 +300,26 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     public boolean performOk() {
         IJavaElement javaPrj = (IJavaElement) getElement();
 
-        try {
-            PropertiesUtil.persistClasspathEntries(javaPrj.getResource(), selections);
-        } catch (CoreException e) {
-            LogUtil.logException(e);
-        }
+        PropertiesUtil.persistClasspathEntries(javaPrj.getJavaProject().getProject(), checkboxTableViewer.getCheckedElements());
 
         return super.performOk();
     }
 
     /**
-     * Load classpaths.
-     * 
-     * @throws CoreException
-     *             the core exception
+     * Load user selected classpaths.
+     *
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    private void loadClasspaths() throws CoreException {
+    private void loadUserSelectedClasspaths() throws CoreException, IOException {
         IJavaElement javaPrj = (IJavaElement) getElement();
-        selections = PropertiesUtil.getClasspathEntries(javaPrj.getResource());
+        Properties props = PropertiesUtil.getClasspathEntries(javaPrj.getJavaProject().getProject());
 
-        tableViewer.setInput(selections);
-        tableViewer.refresh();
+        for (Object s : props.keySet()) {
+            if (classpathRef.contains(s)) {
+                checkboxTableViewer.setChecked(s, true);
+            }
+        }
 
     }
 }

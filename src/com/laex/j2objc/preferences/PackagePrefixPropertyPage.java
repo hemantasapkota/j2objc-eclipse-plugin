@@ -53,6 +53,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.MessageUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class PackagePrefixPropertyPage.
  */
@@ -145,8 +146,10 @@ public class PackagePrefixPropertyPage extends PropertyPage {
     /** The pkg prefix. */
     private Properties pkgPrefix = new Properties();
 
+    /** The btn edit. */
     private Button btnEdit;
 
+    /** The btn reset. */
     private Button btnReset;
 
     /**
@@ -238,6 +241,11 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         return container;
     }
 
+    /**
+     * On selection changed.
+     *
+     * @param event the event
+     */
     protected void onSelectionChanged(SelectionChangedEvent event) {
         if (event.getSelection().isEmpty()) {
             btnEdit.setEnabled(false);
@@ -265,7 +273,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the selected package.
-     * 
+     *
      * @return the selected package
      */
     private String getSelectedPackage() {
@@ -298,9 +306,8 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Load packages.
-     * 
-     * @throws CoreException
-     *             the core exception
+     *
+     * @throws CoreException the core exception
      */
     private void loadPackages() throws CoreException {
         IJavaProject proj = (IJavaProject) getElement();
@@ -366,7 +373,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
             try {
                 propertiesFile.delete(true, null);
             } catch (CoreException e) {
-                e.printStackTrace();
+                LogUtil.logException(e);
             }
 
         }
@@ -377,10 +384,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
             pkgPrefix.store(baos, "");
             propertiesFile.create(new ByteArrayInputStream(baos.toByteArray()), false, null);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.logException(e);
         } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogUtil.logException(e);
         }
 
         return super.performOk();
@@ -388,13 +394,12 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the properties file name.
-     * 
-     * @param javaProject
-     *            the java project
+     *
+     * @param javaProject the java project
      * @return the properties file name
      */
     private String getPropertiesFileName(IJavaProject javaProject) {
-        return new StringBuilder(javaProject.getPath().toOSString()).append("-prefixes.properties").toString();
+        return new StringBuilder("").append(javaProject.getElementName()).append("-prefixes.properties").toString();
     }
 
 }

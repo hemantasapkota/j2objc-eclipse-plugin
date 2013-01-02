@@ -1,21 +1,34 @@
+/*
+ * Copyright (c) 2012, 2013 Hemanta Sapkota.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Hemanta Sapkota (laex.pearl@gmail.com)
+ */
 package j2objc_eclipse_plugin;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+// TODO: Auto-generated Javadoc
 /**
- * The activator class controls the plug-in life cycle
+ * The Class Activator.
  */
 public class Activator extends AbstractUIPlugin {
 
     // The plug-in ID
+    /** The Constant PLUGIN_ID. */
     public static final String PLUGIN_ID = "j2objc-eclipse-plugin"; //$NON-NLS-1$
 
     // The shared instance
+    /** The plugin. */
     private static Activator plugin;
 
     /**
-     * The constructor
+     * Instantiates a new activator.
      */
     public Activator() {
     }
@@ -45,9 +58,9 @@ public class Activator extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the shared instance
-     * 
-     * @return the shared instance
+     * Gets the default.
+     *
+     * @return the default
      */
     public static Activator getDefault() {
         return plugin;

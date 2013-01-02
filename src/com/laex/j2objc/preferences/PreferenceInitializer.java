@@ -15,6 +15,7 @@ import j2objc_eclipse_plugin.Activator;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class PreferenceInitializer.
  */

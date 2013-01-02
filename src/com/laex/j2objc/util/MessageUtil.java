@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class MessageUtil.
  */
@@ -21,9 +22,8 @@ public final class MessageUtil {
 
     /**
      * Message remove items.
-     * 
-     * @param shell
-     *            the shell
+     *
+     * @param shell the shell
      * @return the int
      */
     public static int messageRemoveItems(Shell shell) {

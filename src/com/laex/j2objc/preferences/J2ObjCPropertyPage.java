@@ -353,7 +353,7 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Gets the project.
-     * 
+     *
      * @return the project
      */
     private IResource getProject() {
@@ -398,9 +398,8 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Update default prefs in ui.
-     * 
-     * @param defaultPrefs
-     *            the default prefs
+     *
+     * @param defaultPrefs the default prefs
      */
     private void updateDefaultPrefsInUI(Map<String, String> defaultPrefs) {
         btnGenerateDebugSupport.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT)));
@@ -427,7 +426,7 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Construct pref map.
-     * 
+     *
      * @return the map
      */
     private Map<String, String> constructPrefMap() {
@@ -466,9 +465,8 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Populate properties.
-     * 
-     * @throws CoreException
-     *             the core exception
+     *
+     * @throws CoreException the core exception
      */
     private void populateProperties() throws CoreException {
         Map<String, String> prefs = PropertiesUtil.getProjectProperties(getProject());

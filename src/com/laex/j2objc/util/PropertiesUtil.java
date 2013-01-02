@@ -10,10 +10,12 @@
  */
 package com.laex.j2objc.util;
 
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class PropertiesUtil.
  */
@@ -31,11 +34,9 @@ public class PropertiesUtil {
 
     /**
      * Checks for property.
-     * 
-     * @param key
-     *            the key
-     * @param prefs
-     *            the prefs
+     *
+     * @param key the key
+     * @param prefs the prefs
      * @return true, if successful
      */
     public static boolean hasProperty(String key, Map<String, String> prefs) {
@@ -47,11 +48,9 @@ public class PropertiesUtil {
 
     /**
      * Checks for text property.
-     * 
-     * @param key
-     *            the key
-     * @param prefs
-     *            the prefs
+     *
+     * @param key the key
+     * @param prefs the prefs
      * @return true, if successful
      */
     public static boolean hasTextProperty(String key, Map<String, String> prefs) {
@@ -64,12 +63,10 @@ public class PropertiesUtil {
 
     /**
      * Checks if is default properties set.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return true, if is default properties set
-     * @throws CoreException
-     *             the core exception
+     * @throws CoreException the core exception
      */
     public static boolean isDefaultPropertiesSet(IResource prj) throws CoreException {
         String firstTimer = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_DEBUGGING_SUPPORT));
@@ -78,9 +75,8 @@ public class PropertiesUtil {
 
     /**
      * Gets the prefix properties file.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return the prefix properties file
      */
     public static final String getPrefixPropertiesFile(IProject prj) {
@@ -91,9 +87,8 @@ public class PropertiesUtil {
 
     /**
      * Does exist prefix properties file.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return true, if successful
      */
     public static boolean doesExistPrefixPropertiesFile(IProject prj) {
@@ -103,59 +98,10 @@ public class PropertiesUtil {
     }
 
     /**
-     * Gets the classpath entries.
-     * 
-     * @param prj
-     *            the prj
-     * @return the classpath entries
-     * @throws CoreException
-     *             the core exception
+     * Construct default preferences.
+     *
+     * @return the map
      */
-    public static List<String> getClasspathEntries(IResource prj) throws CoreException {
-        String classpathEntriesString = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.CLASSPAPTH));
-
-        if (classpathEntriesString == null || classpathEntriesString.trim().isEmpty()) {
-            return new ArrayList<String>();
-        }
-
-        String[] cp = classpathEntriesString.split(",");
-
-        List<String> cpMap = new ArrayList<String>();
-
-        for (String s : cp) {
-
-            if (s.equals(",")) {
-                continue;
-            }
-
-            cpMap.add(s);
-        }
-
-        return cpMap;
-    }
-
-    /**
-     * Persist classpath entries.
-     * 
-     * @param prj
-     *            the prj
-     * @param classpath
-     *            the classpath
-     * @throws CoreException
-     *             the core exception
-     */
-    public static void persistClasspathEntries(IResource prj, List<String> classpath) throws CoreException {
-        StringBuilder commaSeperatedValue = new StringBuilder();
-
-        for (String res : classpath) {
-            if (res != null) {
-                commaSeperatedValue.append(res).append(",");
-            }
-        }
-
-        prj.setPersistentProperty(qkey(PreferenceConstants.CLASSPAPTH), commaSeperatedValue.toString());
-    }
-
     public static Map<String, String> constructDefaultPreferences() {
         Map<String, String> prefMap = new HashMap<String, String>();
 
@@ -188,16 +134,15 @@ public class PropertiesUtil {
 
     /**
      * Gets the project properties.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return the project properties
-     * @throws CoreException
-     *             the core exception
+     * @throws CoreException the core exception
      */
     public static Map<String, String> getProjectProperties(IResource prj) throws CoreException {
-        
-        //are we running the translation for the first time ?, if so return default preferences
+
+        // are we running the translation for the first time ?, if so return
+        // default preferences
         String hasAnyPropertiesBeenSet = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.INITIALIZE_FIRST_TIME));
         if (hasAnyPropertiesBeenSet == null) {
             return constructDefaultPreferences();
@@ -264,13 +209,10 @@ public class PropertiesUtil {
 
     /**
      * Persist properties.
-     * 
-     * @param prj
-     *            the prj
-     * @param prefs
-     *            the prefs
-     * @throws CoreException
-     *             the core exception
+     *
+     * @param prj the prj
+     * @param prefs the prefs
+     * @throws CoreException the core exception
      */
     public static void persistProperties(IResource prj, Map<String, String> prefs) throws CoreException {
 
@@ -305,12 +247,79 @@ public class PropertiesUtil {
 
     /**
      * Qkey.
-     * 
-     * @param val
-     *            the val
+     *
+     * @param val the val
      * @return the qualified name
      */
     private static QualifiedName qkey(String val) {
         return new QualifiedName("", val);
+    }
+
+    /**
+     * Gets the classpath filename.
+     *
+     * @param project the project
+     * @return the classpath filename
+     */
+    private static String getClasspathFilename(IProject project) {
+        return new StringBuilder("").append(project.getName()).append("-classpath").toString();
+    }
+
+    /**
+     * Gets the classpath entries.
+     *
+     * @param project the project
+     * @return the classpath entries
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws CoreException the core exception
+     */
+    public static Properties getClasspathEntries(IProject project) throws IOException, CoreException {
+        String fileName = getClasspathFilename(project);
+        IFile propertiesFile = project.getFile(fileName);
+
+        Properties props = new Properties();
+
+        if (propertiesFile.exists()) {
+            props.load(propertiesFile.getContents());
+        }
+
+        return props;
+    }
+    
+    /**
+     * Persist classpath entries.
+     *
+     * @param prj the prj
+     * @param elements the elements
+     */
+    public static void persistClasspathEntries(IProject prj, Object[] elements) {
+        String filename = getClasspathFilename(prj);
+        IFile classpathFile = prj.getFile(filename);
+
+        if (classpathFile.exists()) {
+            try {
+                classpathFile.delete(true, null);
+            } catch (CoreException e) {
+                LogUtil.logException(e);
+            }
+        }
+        
+
+        Properties props = new Properties();
+        for (Object o : elements) {
+            props.put(o, "");
+        }
+        
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            props.store(baos, "");
+            classpathFile.create(new ByteArrayInputStream(baos.toByteArray()), false, null);
+        } catch (CoreException e) {
+            LogUtil.logException(e);
+        } catch (IOException e) {
+            LogUtil.logException(e);
+        }
+ 
     }
 }

@@ -13,6 +13,7 @@ package com.laex.j2objc;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 
 import org.eclipse.core.resources.IProject;
@@ -33,6 +34,7 @@ import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ToObjectiveCDelegate.
  */
@@ -46,22 +48,19 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Instantiates a new to objective c delegate.
-     * 
-     * @param prefs
-     *            the prefs
-     * @param monitor
-     *            the monitor
+     *
+     * @param prefs the prefs
+     * @param monitor the monitor
      */
-    public ToObjectiveCDelegate(Map<String, String> prefs,  IProgressMonitor monitor) {
+    public ToObjectiveCDelegate(Map<String, String> prefs, IProgressMonitor monitor) {
         this.prefs = prefs;
         this.monitor = monitor;
     }
 
     /**
      * Find console.
-     * 
-     * @param name
-     *            the name
+     *
+     * @param name the name
      * @return the message console
      */
     private MessageConsole findConsole(String name) {
@@ -79,33 +78,29 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Builds the command.
-     * 
-     * @param prefs
-     *            the prefs
-     * @param project
-     *            the project
-     * @param sourcePath
-     *            the source path
-     * @param outputPath
-     *            the output path
+     *
+     * @param prefs the prefs
+     * @param project the project
+     * @param sourcePath the source path
+     * @param outputPath the output path
      * @return the string
-     * @throws CoreException
-     *             the core exception
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    private String buildCommand(Map<String, String> prefs, IProject project, String sourcePath, String outputPath) throws CoreException {
+    private String buildCommand(Map<String, String> prefs, IProject project, String sourcePath, String outputPath) throws CoreException, IOException {
         StringBuilder sb = new StringBuilder();
 
         // Create platform indenpendent path and append the path to the compiler
         IPath pathToCompiler = new Path(prefs.get(PreferenceConstants.PATH_TO_COMPILER)).append(PreferenceConstants.J2_OBJC_COMPILER);
         sb.append(pathToCompiler.toOSString()).append(" ");
 
-        List<String> classpath = PropertiesUtil.getClasspathEntries(project);
-        if (!classpath.isEmpty()) {
+        Properties classpathProps = PropertiesUtil.getClasspathEntries(project);
+        if (!classpathProps.isEmpty()) {
             sb.append(PreferenceConstants.CLASSPAPTH).append(" ");
-            for (String s : classpath) {
-                sb.append(s).append(":");
+            for (Object key : classpathProps.keySet()) {
+                sb.append(key).append(":");
             }
-            
+
             sb.append(" ");
         }
 
@@ -198,18 +193,19 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         String sourcePath = resource.getLocation().makeAbsolute().toOSString();
         String outputPath = resource.getParent().getLocation().makeAbsolute().toOSString();
 
-        final String cmd = buildCommand(prefs, resource.getProject(), sourcePath, outputPath);
-
-        monitor.subTask(resource.getName());
-
-        Process p;
         try {
+            String cmd = buildCommand(prefs, resource.getProject(), sourcePath, outputPath);
+
+            monitor.subTask(resource.getName());
+
+            Process p;
             p = Runtime.getRuntime().exec(cmd);
             Scanner scan = new Scanner(p.getInputStream());
 
             MessageConsole mc = findConsole("J2OBJC Console");
             MessageConsoleStream mst = mc.newMessageStream();
             mst.write(cmd);
+            mst.write("\r\n");
 
             while (scan.hasNext()) {
                 mst.write(scan.nextLine());

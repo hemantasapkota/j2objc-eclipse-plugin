@@ -14,6 +14,7 @@ import j2objc_eclipse_plugin.Activator;
 
 import org.eclipse.core.runtime.Status;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class LogUtil.
  */
@@ -21,9 +22,8 @@ public final class LogUtil {
 
     /**
      * Log exception.
-     * 
-     * @param e
-     *            the e
+     *
+     * @param e the e
      */
     public static void logException(Exception e) {
         Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.getMessage()));
