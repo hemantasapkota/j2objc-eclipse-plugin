@@ -7,9 +7,9 @@ Installation
 =====================
 You can install the plugin via the update site
 
-http://j2objc-updatesite.hsapkota.com.au/
+Eclipse Indigo - http://j2objc-updatesite.hsapkota.com.au/3.7/
 
-The plugin has been tested with Eclipse Juno 4.2
+Eclipse Juno - http://j2objc-updatesite.hsapkota.com.au/4.2/
 
 Usage
 =====================
