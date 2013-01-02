@@ -34,7 +34,6 @@ import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ToObjectiveCDelegate.
  */
@@ -51,10 +50,13 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Instantiates a new to objective c delegate.
-     *
-     * @param display the display
-     * @param prefs the prefs
-     * @param monitor the monitor
+     * 
+     * @param display
+     *            the display
+     * @param prefs
+     *            the prefs
+     * @param monitor
+     *            the monitor
      */
     public ToObjectiveCDelegate(Display display, Map<String, String> prefs, IProgressMonitor monitor) {
         this.display = display;
@@ -64,8 +66,9 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Find console.
-     *
-     * @param name the name
+     * 
+     * @param name
+     *            the name
      * @return the message console
      */
     private MessageConsole findConsole(String name) {
@@ -83,14 +86,20 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Builds the command.
-     *
-     * @param prefs the prefs
-     * @param project the project
-     * @param sourcePath the source path
-     * @param outputPath the output path
+     * 
+     * @param prefs
+     *            the prefs
+     * @param project
+     *            the project
+     * @param sourcePath
+     *            the source path
+     * @param outputPath
+     *            the output path
      * @return the string
-     * @throws CoreException the core exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws CoreException
+     *             the core exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private String buildCommand(Map<String, String> prefs, IProject project, String sourcePath, String outputPath) throws CoreException, IOException {
         StringBuilder sb = new StringBuilder();
@@ -184,6 +193,7 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     public boolean visit(final IResource resource) throws CoreException {
         // cancel the job
         if (monitor.isCanceled()) {
+            resource.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
             return false;
         }
 
