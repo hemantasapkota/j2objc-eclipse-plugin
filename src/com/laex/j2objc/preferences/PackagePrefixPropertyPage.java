@@ -53,7 +53,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.MessageUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PackagePrefixPropertyPage.
  */
@@ -399,7 +398,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
      * @return the properties file name
      */
     private String getPropertiesFileName(IJavaProject javaProject) {
-        return new StringBuilder("").append(javaProject.getElementName()).append("-prefixes.properties").toString();
+        return new StringBuilder(".").append(javaProject.getElementName()).append("-prefixes").toString();
     }
 
 }

@@ -262,7 +262,7 @@ public class PropertiesUtil {
      * @return the classpath filename
      */
     private static String getClasspathFilename(IProject project) {
-        return new StringBuilder("").append(project.getName()).append("-classpath").toString();
+        return new StringBuilder(".").append(project.getName()).append("-classpath").toString();
     }
 
     /**

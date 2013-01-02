@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -68,7 +69,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /** The btn remove. */
     private Button btnRemove;
-    
+
     /** The table. */
     private Table table;
 
@@ -114,9 +115,13 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      */
 
     private class ContentProvider implements IStructuredContentProvider {
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
+         * java.lang.Object)
          */
         public Object[] getElements(Object inputElement) {
             Object[] o = ((Set<String>) inputElement).toArray();
@@ -124,14 +129,20 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
             return o;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
         public void dispose() {
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+         * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
@@ -141,7 +152,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      * Instantiates a new classpath property page.
      */
     public ClasspathPropertyPage() {
-        setDescription("");
+        setDescription("The selected classpath entires are used at the time of compiling.");
         setMessage("J2OBJC Preferences");
     }
 
@@ -234,13 +245,30 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
                 // we store the full absolute path to the folders
                 boolean isArchive = path.endsWith("jar") || path.endsWith("zip");
                 if (!isArchive) {
-                    IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path(path));
-                    if (folder.exists()) {
-                        path = folder.getLocation().makeAbsolute().toOSString();
+                    IPath ipath = new Path(path);
+                    // We can only get a folder if the segment count is greater
+                    // 2 i.e. if the path has at least two segments
+                    if (ipath.segmentCount() >= 2) {
+                        IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(ipath);
+                        if (folder.exists()) {
+                            classpathRef.add(folder.getLocation().makeAbsolute().toOSString());
+                        }
                     }
+
+                    // If the segment count is 1, then it is probably a project
+                    if (ipath.segmentCount() == 1) {
+                        IProject refPrj = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
+                        //if this is a project, then we assume it has a SRC folder; and therefore append SRC at the end
+                        //this is required because j2objc compiler needs the path till the src folder to compile properly
+
+                        classpathRef.add(refPrj.getLocation().append("src").makeAbsolute().toOSString());
+                    }
+
+                } else {
+                    //add whatever archive path we get from the results
+                    classpathRef.add(path);
                 }
 
-                classpathRef.add(path);
             }
 
             checkboxTableViewer.setInput(classpathRef);
@@ -307,9 +335,11 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /**
      * Load user selected classpaths.
-     *
-     * @throws CoreException the core exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * 
+     * @throws CoreException
+     *             the core exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private void loadUserSelectedClasspaths() throws CoreException, IOException {
         IJavaElement javaPrj = (IJavaElement) getElement();
