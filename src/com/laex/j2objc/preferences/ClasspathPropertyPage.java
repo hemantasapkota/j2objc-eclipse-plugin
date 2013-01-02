@@ -10,15 +10,12 @@
  */
 package com.laex.j2objc.preferences;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,36 +24,27 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.internal.SharedImages;
 
 import com.laex.j2objc.util.LogUtil;
-import com.laex.j2objc.util.MessageUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
 /**
@@ -66,9 +54,6 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /** The classpath ref. */
     private Set<String> classpathRef = new HashSet<String>();
-
-    /** The btn remove. */
-    private Button btnRemove;
 
     /** The table. */
     private Table table;
@@ -166,53 +151,19 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     @Override
     public Control createContents(Composite parent) {
         Composite container = new Composite(parent, SWT.NULL);
-        container.setLayout(new GridLayout(2, false));
+        container.setLayout(new GridLayout(1, false));
 
         checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
         table = checkboxTableViewer.getTable();
         table.setHeaderVisible(true);
         GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-        gd_table.heightHint = 400;
+        gd_table.heightHint = 338;
         table.setLayoutData(gd_table);
 
         TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
         TableColumn tblclmnClasspath = tableViewerColumn.getColumn();
         tblclmnClasspath.setWidth(295);
         tblclmnClasspath.setText("Classpath");
-
-        Composite composite = new Composite(container, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-        composite.setLayout(new RowLayout(SWT.VERTICAL));
-
-        Button btnAddClasspath = new Button(composite, SWT.NONE);
-        btnAddClasspath.setLayoutData(new RowData(88, SWT.DEFAULT));
-        btnAddClasspath.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                addClasspath();
-            }
-        });
-        btnAddClasspath.setText("Add");
-
-        btnRemove = new Button(composite, SWT.NONE);
-        btnRemove.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                removeSelection();
-            }
-        });
-        btnRemove.setLayoutData(new RowData(88, SWT.DEFAULT));
-        btnRemove.setText("Remove");
-        btnRemove.setEnabled(false);
-
-        Button btnRemoveAll = new Button(composite, SWT.NONE);
-        btnRemoveAll.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                removeAll();
-            }
-        });
-        btnRemoveAll.setText("Remove All");
 
         checkboxTableViewer.setContentProvider(new ContentProvider());
         checkboxTableViewer.setLabelProvider(new TableLabelProvider());
@@ -276,47 +227,6 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         } catch (JavaModelException e) {
             LogUtil.logException(e);
         }
-    }
-
-    /**
-     * Removes the selection.
-     */
-    private void removeSelection() {
-        IStructuredSelection iss = (IStructuredSelection) checkboxTableViewer.getSelection();
-        String res = (String) iss.getFirstElement();
-        classpathRef.remove(res);
-        checkboxTableViewer.refresh();
-    }
-
-    /**
-     * Removes the all.
-     */
-    protected void removeAll() {
-        int resp = MessageUtil.messageRemoveItems(getShell());
-        if (resp == SWT.OK) {
-            classpathRef.clear();
-            checkboxTableViewer.refresh();
-        }
-    }
-
-    /**
-     * Adds the classpath.
-     */
-    protected void addClasspath() {
-        ContainerSelectionDialog csd = new ContainerSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-                "Select a src container as classpath");
-        int response = csd.open();
-        if (response == ContainerSelectionDialog.CANCEL) {
-            return;
-        }
-
-        for (Object o : csd.getResult()) {
-            IPath path = (IPath) o;
-            String s = ResourcesPlugin.getWorkspace().getRoot().getFolder(path).getLocation().makeAbsolute().toOSString();
-            classpathRef.add(s);
-        }
-
-        checkboxTableViewer.refresh();
     }
 
     /*
