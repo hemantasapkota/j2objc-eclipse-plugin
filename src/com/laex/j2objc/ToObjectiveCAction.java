@@ -32,7 +32,6 @@ import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ToObjectiveCAction.
  */
@@ -76,7 +75,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                     props.put(PreferenceConstants.PATH_TO_COMPILER,
                             Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.PATH_TO_COMPILER));
 
-                    ToObjectiveCDelegate del = new ToObjectiveCDelegate(props, monitor);
+                    ToObjectiveCDelegate del = new ToObjectiveCDelegate(targetPart.getSite().getShell().getDisplay(), props, monitor);
                     elm.getResource().accept(del);
 
                     // refresh

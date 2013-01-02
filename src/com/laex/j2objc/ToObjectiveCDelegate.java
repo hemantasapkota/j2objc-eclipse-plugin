@@ -11,7 +11,6 @@
 package com.laex.j2objc;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
@@ -24,6 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -46,13 +46,18 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     /** The monitor. */
     private IProgressMonitor monitor;
 
+    /** The display. */
+    private Display display;
+
     /**
      * Instantiates a new to objective c delegate.
      *
+     * @param display the display
      * @param prefs the prefs
      * @param monitor the monitor
      */
-    public ToObjectiveCDelegate(Map<String, String> prefs, IProgressMonitor monitor) {
+    public ToObjectiveCDelegate(Display display, Map<String, String> prefs, IProgressMonitor monitor) {
+        this.display = display;
         this.prefs = prefs;
         this.monitor = monitor;
     }
@@ -191,7 +196,11 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         }
 
         String sourcePath = resource.getLocation().makeAbsolute().toOSString();
-        String outputPath = resource.getParent().getLocation().makeAbsolute().toOSString();
+        // As per the discussion with Tom Ball, the output of compilation is
+        // stored in the project's root source folder
+        // See
+        // https://groups.google.com/forum/?fromgroups=#!topic/j2objc-discuss/lJGzN-pxmkQ
+        String outputPath = resource.getProject().getFolder("src").getLocation().makeAbsolute().toOSString();
 
         try {
             String cmd = buildCommand(prefs, resource.getProject(), sourcePath, outputPath);
@@ -200,15 +209,22 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
             Process p;
             p = Runtime.getRuntime().exec(cmd);
-            Scanner scan = new Scanner(p.getInputStream());
+            Scanner scanInput = new Scanner(p.getInputStream());
+            Scanner scanErr = new Scanner(p.getErrorStream());
 
             MessageConsole mc = findConsole("J2OBJC Console");
             MessageConsoleStream mst = mc.newMessageStream();
             mst.write(cmd);
             mst.write("\r\n");
 
-            while (scan.hasNext()) {
-                mst.write(scan.nextLine());
+            while (scanInput.hasNext()) {
+                mst.write(scanInput.nextLine());
+                mst.write("\r\n");
+
+            }
+
+            while (scanErr.hasNext()) {
+                mst.write(scanErr.nextLine());
                 mst.write("\r\n");
             }
 

@@ -335,11 +335,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /**
      * Load user selected classpaths.
-     * 
-     * @throws CoreException
-     *             the core exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void loadUserSelectedClasspaths() throws CoreException, IOException {
         IJavaElement javaPrj = (IJavaElement) getElement();
