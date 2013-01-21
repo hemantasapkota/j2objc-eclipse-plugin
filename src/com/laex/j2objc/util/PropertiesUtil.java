@@ -34,9 +34,11 @@ public class PropertiesUtil {
 
     /**
      * Checks for property.
-     *
-     * @param key the key
-     * @param prefs the prefs
+     * 
+     * @param key
+     *            the key
+     * @param prefs
+     *            the prefs
      * @return true, if successful
      */
     public static boolean hasProperty(String key, Map<String, String> prefs) {
@@ -48,9 +50,11 @@ public class PropertiesUtil {
 
     /**
      * Checks for text property.
-     *
-     * @param key the key
-     * @param prefs the prefs
+     * 
+     * @param key
+     *            the key
+     * @param prefs
+     *            the prefs
      * @return true, if successful
      */
     public static boolean hasTextProperty(String key, Map<String, String> prefs) {
@@ -63,10 +67,12 @@ public class PropertiesUtil {
 
     /**
      * Checks if is default properties set.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return true, if is default properties set
-     * @throws CoreException the core exception
+     * @throws CoreException
+     *             the core exception
      */
     public static boolean isDefaultPropertiesSet(IResource prj) throws CoreException {
         String firstTimer = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_DEBUGGING_SUPPORT));
@@ -74,32 +80,45 @@ public class PropertiesUtil {
     }
 
     /**
+     * Gets the prefix properties file name.
+     * 
+     * @param project
+     *            the project
+     * @return the prefix properties file name
+     */
+    public static String constructPrefixPropertiesFilePath(IResource project) {
+        return new StringBuilder(".").append(project.getName()).append("-prefixes").toString();
+    }
+
+    /**
      * Gets the prefix properties file.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return the prefix properties file
      */
     public static final String getPrefixPropertiesFile(IProject prj) {
-        String prefixFile = prj.getFullPath().toOSString() + "-prefixes.properties";
+        String prefixFile = PropertiesUtil.constructPrefixPropertiesFilePath(prj);
         IFile file = prj.getFile(new Path(prefixFile));
         return file.getLocation().makeAbsolute().toOSString();
     }
 
     /**
      * Does exist prefix properties file.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return true, if successful
      */
     public static boolean doesExistPrefixPropertiesFile(IProject prj) {
-        String prefixFile = prj.getFullPath().toOSString() + "-prefixes.properties";
+        String prefixFile = PropertiesUtil.constructPrefixPropertiesFilePath(prj);
         IFile file = prj.getFile(new Path(prefixFile));
         return file.exists();
     }
 
     /**
      * Construct default preferences.
-     *
+     * 
      * @return the map
      */
     public static Map<String, String> constructDefaultPreferences() {
@@ -134,10 +153,12 @@ public class PropertiesUtil {
 
     /**
      * Gets the project properties.
-     *
-     * @param prj the prj
+     * 
+     * @param prj
+     *            the prj
      * @return the project properties
-     * @throws CoreException the core exception
+     * @throws CoreException
+     *             the core exception
      */
     public static Map<String, String> getProjectProperties(IResource prj) throws CoreException {
 
@@ -209,10 +230,13 @@ public class PropertiesUtil {
 
     /**
      * Persist properties.
-     *
-     * @param prj the prj
-     * @param prefs the prefs
-     * @throws CoreException the core exception
+     * 
+     * @param prj
+     *            the prj
+     * @param prefs
+     *            the prefs
+     * @throws CoreException
+     *             the core exception
      */
     public static void persistProperties(IResource prj, Map<String, String> prefs) throws CoreException {
 
@@ -247,8 +271,9 @@ public class PropertiesUtil {
 
     /**
      * Qkey.
-     *
-     * @param val the val
+     * 
+     * @param val
+     *            the val
      * @return the qualified name
      */
     private static QualifiedName qkey(String val) {
@@ -257,8 +282,9 @@ public class PropertiesUtil {
 
     /**
      * Gets the classpath filename.
-     *
-     * @param project the project
+     * 
+     * @param project
+     *            the project
      * @return the classpath filename
      */
     private static String getClasspathFilename(IProject project) {
@@ -267,11 +293,14 @@ public class PropertiesUtil {
 
     /**
      * Gets the classpath entries.
-     *
-     * @param project the project
+     * 
+     * @param project
+     *            the project
      * @return the classpath entries
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws CoreException the core exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     * @throws CoreException
+     *             the core exception
      */
     public static Properties getClasspathEntries(IProject project) throws IOException, CoreException {
         String fileName = getClasspathFilename(project);
@@ -285,12 +314,14 @@ public class PropertiesUtil {
 
         return props;
     }
-    
+
     /**
      * Persist classpath entries.
-     *
-     * @param prj the prj
-     * @param elements the elements
+     * 
+     * @param prj
+     *            the prj
+     * @param elements
+     *            the elements
      */
     public static void persistClasspathEntries(IProject prj, Object[] elements) {
         String filename = getClasspathFilename(prj);
@@ -303,13 +334,11 @@ public class PropertiesUtil {
                 LogUtil.logException(e);
             }
         }
-        
 
         Properties props = new Properties();
         for (Object o : elements) {
             props.put(o, "");
         }
-        
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -320,6 +349,6 @@ public class PropertiesUtil {
         } catch (IOException e) {
             LogUtil.logException(e);
         }
- 
+
     }
 }

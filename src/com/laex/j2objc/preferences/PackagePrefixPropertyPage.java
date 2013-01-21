@@ -52,6 +52,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.MessageUtil;
+import com.laex.j2objc.util.PropertiesUtil;
 
 /**
  * The Class PackagePrefixPropertyPage.
@@ -339,7 +340,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
     private void loadProperties() {
         IJavaProject javaProject = (IJavaProject) getElement();
 
-        String propertiesFilePath = getPropertiesFileName(javaProject);
+        String propertiesFilePath = PropertiesUtil.constructPrefixPropertiesFilePath(javaProject.getProject());
         IFile propertiesFile = javaProject.getProject().getFile(propertiesFilePath);
 
         if (propertiesFile.exists()) {
