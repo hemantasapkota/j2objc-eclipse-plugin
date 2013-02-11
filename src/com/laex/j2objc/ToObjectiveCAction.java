@@ -75,7 +75,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                     props.put(PreferenceConstants.PATH_TO_COMPILER,
                             Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.PATH_TO_COMPILER));
 
-                    ToObjectiveCDelegate del = new ToObjectiveCDelegate(targetPart.getSite().getShell().getDisplay(), props, monitor);
+                    ToObjectiveCDelegate del = new ToObjectiveCDelegate(props, monitor);
                     elm.getResource().accept(del);
 
                     // refresh

@@ -78,6 +78,12 @@ public class PreferenceConstants {
 
     /** The Constant DEAD_CODE_REPORT. */
     public static final String DEAD_CODE_REPORT = "--dead-code-report";
+    
+    /** The Constant MEM_DEBUG. */
+    public static final String MEM_DEBUG = "--mem-debug";
+    
+     /** The Constant GENERATE_NATIVE_STUBS. */
+    public static final String GENERATE_NATIVE_STUBS = "--generate-native-stubs";
 
     /** The Constant NO_INLINE_FIELD_ACCESS. */
     public static final String NO_INLINE_FIELD_ACCESS = "--no-inline-field-access";

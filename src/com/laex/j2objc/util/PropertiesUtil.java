@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.QualifiedName;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PropertiesUtil.
  */
@@ -146,6 +145,9 @@ public class PropertiesUtil {
         prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.TRUE.toString());
         prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.FALSE.toString());
+        
+        prefMap.put(PreferenceConstants.MEM_DEBUG, Boolean.FALSE.toString());
+        prefMap.put(PreferenceConstants.GENERATE_NATIVE_STUBS, Boolean.FALSE.toString());
 
         return prefMap;
 
@@ -187,6 +189,10 @@ public class PropertiesUtil {
         String ignoreMissingImports = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.IGNORE_MISSING_IMPORTS));
         String printConverterdSources = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.PRINT_CONVERTED_SOURCES));
         String timingInfo = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.TIMING_INFO));
+        
+        
+        String memDebug = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.MEM_DEBUG));
+        String generateNativeStubs = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_NATIVE_STUBS));
 
         String defaultPropertiesSetInfo = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.INITIALIZE_FIRST_TIME));
 
@@ -224,6 +230,9 @@ public class PropertiesUtil {
         prefs.put(PreferenceConstants.DEAD_CODE_REPORT, deadCodeReportFile);
         prefs.put(PreferenceConstants.METHOD_MAPPING_FILE, methodMappingFile);
         prefs.put(PreferenceConstants.BOOTCLASSPATH, bootclasspath);
+        
+        prefs.put(PreferenceConstants.MEM_DEBUG, memDebug);
+        prefs.put(PreferenceConstants.GENERATE_NATIVE_STUBS, generateNativeStubs);
 
         return prefs;
     }
@@ -262,10 +271,17 @@ public class PropertiesUtil {
         prj.setPersistentProperty(qkey(PreferenceConstants.IGNORE_MISSING_IMPORTS), prefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS));
         prj.setPersistentProperty(qkey(PreferenceConstants.PRINT_CONVERTED_SOURCES), prefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES));
         prj.setPersistentProperty(qkey(PreferenceConstants.TIMING_INFO), prefs.get(PreferenceConstants.TIMING_INFO));
+        
+        prj.setPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG), prefs.get(PreferenceConstants.MEM_DEBUG));
+        prj.setPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS), prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS));
 
         prj.setPersistentProperty(qkey(PreferenceConstants.DEAD_CODE_REPORT), prefs.get(PreferenceConstants.DEAD_CODE_REPORT));
         prj.setPersistentProperty(qkey(PreferenceConstants.METHOD_MAPPING_FILE), prefs.get(PreferenceConstants.METHOD_MAPPING_FILE));
         prj.setPersistentProperty(qkey(PreferenceConstants.BOOTCLASSPATH), prefs.get(PreferenceConstants.BOOTCLASSPATH));
+        
+        
+        prj.setPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG), prefs.get(PreferenceConstants.MEM_DEBUG));
+        prj.setPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS), prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS));
 
     }
 

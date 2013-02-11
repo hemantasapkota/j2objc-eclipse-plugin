@@ -121,6 +121,8 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The lbl bootclasspath. */
     private Label lblBootclasspath;
+    private Button btnMemDebug;
+    private Button btnGenerateNativeStubs;
 
     /**
      * Instantiates a new j2 obj c property page.
@@ -230,6 +232,19 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
             {
                 btnTimingInfo = new Button(grpOthers, SWT.CHECK);
                 btnTimingInfo.setText("Print time spent in translation steps");
+            }
+            {
+                btnMemDebug = new Button(grpOthers, SWT.CHECK);
+                btnMemDebug.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                    }
+                });
+                btnMemDebug.setText("Generate code to display memory allocation graphs");
+            }
+            {
+                btnGenerateNativeStubs = new Button(grpOthers, SWT.CHECK);
+                btnGenerateNativeStubs.setText("Generate method bodies for native methods that do not have OCNI native code");
             }
         }
         {
@@ -415,13 +430,15 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnMakeErrorsToWarnings.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.ERROR_TO_WARNING)));
         btnQuiet.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.QUIET)));
         btnVerbose.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.VERBOSE)));
+        
+        btnMemDebug.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.MEM_DEBUG)));
+        btnGenerateNativeStubs.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS)));
 
         btnNoInlineFieldAccess.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.NO_INLINE_FIELD_ACCESS)));
         btnNoGenerateTestMain.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.NO_GENERATE_TEST_MAIN)));
         btnIgnoreMissingImports.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS)));
         btnPrintConvertedSources.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES)));
         btnTimingInfo.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.TIMING_INFO)));
-
     }
 
     /**
@@ -455,6 +472,11 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.toString(btnIgnoreMissingImports.getSelection()));
         prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.toString(btnPrintConvertedSources.getSelection()));
         prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.toString(btnTimingInfo.getSelection()));
+        
+        //new optios added from j2objc 0.6
+        prefMap.put(PreferenceConstants.MEM_DEBUG, Boolean.toString(btnMemDebug.getSelection()));
+        prefMap.put(PreferenceConstants.GENERATE_NATIVE_STUBS, Boolean.toString(btnGenerateNativeStubs.getSelection()));
+        //end new options
 
         prefMap.put(PreferenceConstants.DEAD_CODE_REPORT, txtProguardFile.getText());
         prefMap.put(PreferenceConstants.METHOD_MAPPING_FILE, txtMethodMappingFile.getText());
@@ -490,7 +512,10 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnIgnoreMissingImports.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS)));
         btnPrintConvertedSources.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES)));
         btnTimingInfo.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.TIMING_INFO)));
-
+        
+        btnMemDebug.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.MEM_DEBUG)));
+        btnGenerateNativeStubs.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS)));
+        
         txtProguardFile.setText(prefs.get(PreferenceConstants.DEAD_CODE_REPORT));
         txtMethodMappingFile.setText(prefs.get(PreferenceConstants.METHOD_MAPPING_FILE));
         txtBootpath.setText(prefs.get(PreferenceConstants.BOOTCLASSPATH));

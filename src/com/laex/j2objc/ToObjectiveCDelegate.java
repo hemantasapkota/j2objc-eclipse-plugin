@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -45,21 +44,15 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     /** The monitor. */
     private IProgressMonitor monitor;
 
-    /** The display. */
-    private Display display;
-
     /**
      * Instantiates a new to objective c delegate.
      * 
-     * @param display
-     *            the display
      * @param prefs
      *            the prefs
      * @param monitor
      *            the monitor
      */
-    public ToObjectiveCDelegate(Display display, Map<String, String> prefs, IProgressMonitor monitor) {
-        this.display = display;
+    public ToObjectiveCDelegate(Map<String, String> prefs, IProgressMonitor monitor) {
         this.prefs = prefs;
         this.monitor = monitor;
     }
@@ -159,6 +152,12 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.PRINT_CONVERTED_SOURCES, prefs))
             sb.append(PreferenceConstants.PRINT_CONVERTED_SOURCES).append(" ");
+
+        if (PropertiesUtil.hasProperty(PreferenceConstants.MEM_DEBUG, prefs))
+            sb.append(PreferenceConstants.MEM_DEBUG).append(" ");
+        
+         if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_NATIVE_STUBS, prefs))
+            sb.append(PreferenceConstants.GENERATE_NATIVE_STUBS).append(" ");
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.TIMING_INFO, prefs))
             sb.append(PreferenceConstants.TIMING_INFO).append(" ");
