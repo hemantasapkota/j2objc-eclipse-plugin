@@ -14,7 +14,6 @@ import j2objc_eclipse_plugin.Activator;
 
 import org.eclipse.core.runtime.Status;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class LogUtil.
  */
