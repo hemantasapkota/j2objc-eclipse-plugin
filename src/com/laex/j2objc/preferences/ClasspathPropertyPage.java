@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -91,7 +94,6 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
          */
         public String getColumnText(Object element, int columnIndex) {
             return (String) element;
-
         }
     }
 
@@ -189,14 +191,36 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         try {
             IClasspathEntry[] refClasspath = elm.getJavaProject().getResolvedClasspath(true);
             for (IClasspathEntry o : refClasspath) {
-                IClasspathEntry entry = (IClasspathEntry) o;
-                String path = entry.getPath().makeAbsolute().toOSString();
+                IClasspathEntry entry = JavaCore.getResolvedClasspathEntry((IClasspathEntry) o);
+
+                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(entry.getPath());
+                String path = null;
+
+                // Issue
+                // 2:https://github.com/hemantasapkota/j2objc-eclipse-plugin/issues/2
+                try {
+                    path = file.getLocation().makeAbsolute().toOSString();
+                } catch (NullPointerException ex) {
+                } finally {
+                    // some paths may not be translated to full absolute path,
+                    // in that case, we fall back
+                    // use regular path. Note, this code is inside finally
+                    // block.
+                    // It is a good idea to have this code in finally block.
+                    if (path == null) {
+                        path = entry.getPath().makeAbsolute().toOSString();
+                    }
+                }
+                // // end fix for issue 2
 
                 // some path may be folders. In that case, we have to make sure
                 // we store the full absolute path to the folders
                 boolean isArchive = path.endsWith("jar") || path.endsWith("zip");
                 if (!isArchive) {
-                    IPath ipath = new Path(path);
+                    //make sure to compute new folder path instead of using the computed one aboe.
+                    //folder.exists() method can determine the existence based on non-absolute path
+                    String folderPath = entry.getPath().makeAbsolute().toOSString();
+                    IPath ipath = new Path(folderPath);
                     // We can only get a folder if the segment count is greater
                     // 2 i.e. if the path has at least two segments
                     if (ipath.segmentCount() >= 2) {
@@ -209,14 +233,16 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
                     // If the segment count is 1, then it is probably a project
                     if (ipath.segmentCount() == 1) {
                         IProject refPrj = ResourcesPlugin.getWorkspace().getRoot().getProject(path);
-                        //if this is a project, then we assume it has a SRC folder; and therefore append SRC at the end
-                        //this is required because j2objc compiler needs the path till the src folder to compile properly
+                        // if this is a project, then we assume it has a SRC
+                        // folder; and therefore append SRC at the end
+                        // this is required because j2objc compiler needs the
+                        // path till the src folder to compile properly
 
                         classpathRef.add(refPrj.getLocation().append("src").makeAbsolute().toOSString());
                     }
 
                 } else {
-                    //add whatever archive path we get from the results
+                    // add whatever archive path we get from the results
                     classpathRef.add(path);
                 }
 
@@ -245,9 +271,11 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /**
      * Load user selected classpaths.
-     *
-     * @throws CoreException the core exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * 
+     * @throws CoreException
+     *             the core exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private void loadUserSelectedClasspaths() throws CoreException, IOException {
         IJavaElement javaPrj = (IJavaElement) getElement();
