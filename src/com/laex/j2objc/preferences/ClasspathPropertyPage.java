@@ -20,12 +20,14 @@ import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -191,36 +193,47 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         try {
             IClasspathEntry[] refClasspath = elm.getJavaProject().getResolvedClasspath(true);
             for (IClasspathEntry o : refClasspath) {
-                IClasspathEntry entry = JavaCore.getResolvedClasspathEntry((IClasspathEntry) o);
 
-                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(entry.getPath());
+                IClasspathEntry entry = JavaCore.getResolvedClasspathEntry((IClasspathEntry) o);
                 String path = null;
 
-                // Issue
-                // 2:https://github.com/hemantasapkota/j2objc-eclipse-plugin/issues/2
-                try {
-                    path = file.getLocation().makeAbsolute().toOSString();
-                } catch (NullPointerException ex) {
-                } finally {
-                    // some paths may not be translated to full absolute path,
-                    // in that case, we fall back
-                    // use regular path. Note, this code is inside finally
-                    // block.
-                    // It is a good idea to have this code in finally block.
-                    if (path == null) {
+                //We need to figure out the path for different types of classpath entries.
+                // the types of entries are: CPE_LIBRARY, CPE_PROJECT, CPE_SOURCE, CPE_VARIABLE, CPE_CONTAINER
+                switch (entry.getEntryKind()) {
+                case IClasspathEntry.CPE_LIBRARY:
+
+                    //With CPE Library: some jar files could reside in system, like JDK jar files
+                    //some jar files may reside in workspace, within other project.
+                    //Check if the library resides in workspace project
+                    IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
+                    //null means, this library does not reside in workspace but instead in the system
+                    if (file == null) {
+                        //get the apropriate path
                         path = entry.getPath().makeAbsolute().toOSString();
+                    } else {
+                        //if resdies in workspace, get the appropriate path
+                        if (file.exists()) {
+                            path = file.getLocation().makeAbsolute().toOSString();
+                        }
                     }
+
+                    break;
+
+                case IClasspathEntry.CPE_PROJECT:
+                case IClasspathEntry.CPE_SOURCE:
+                    //project and source
+                    IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
+                    if (res.exists()) {
+                        path = res.getFullPath().makeAbsolute().toOSString();
+                    }
+                    break;
                 }
-                // // end fix for issue 2
 
                 // some path may be folders. In that case, we have to make sure
                 // we store the full absolute path to the folders
                 boolean isArchive = path.endsWith("jar") || path.endsWith("zip");
                 if (!isArchive) {
-                    //make sure to compute new folder path instead of using the computed one aboe.
-                    //folder.exists() method can determine the existence based on non-absolute path
-                    String folderPath = entry.getPath().makeAbsolute().toOSString();
-                    IPath ipath = new Path(folderPath);
+                    IPath ipath = new Path(path);
                     // We can only get a folder if the segment count is greater
                     // 2 i.e. if the path has at least two segments
                     if (ipath.segmentCount() >= 2) {
