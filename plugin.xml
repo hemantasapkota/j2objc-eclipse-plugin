@@ -91,6 +91,17 @@
             </adapt>
          </enabledWhen>
       </page>
+      <page
+            category="J2ObjCPropertyPage"
+            class="com.laex.j2objc.preferences.OutputDirPropertyPage"
+            id="J2ObjcPropertyPage.OutputDir"
+            name="Output Directory">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
+      </page>
    </extension>
 
 </plugin>

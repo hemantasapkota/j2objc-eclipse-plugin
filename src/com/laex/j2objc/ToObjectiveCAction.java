@@ -12,8 +12,10 @@ package com.laex.j2objc;
 
 import j2objc_eclipse_plugin.Activator;
 
+import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,9 +29,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
+import com.laex.j2objc.util.MessageUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
 /**
@@ -66,7 +71,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
             protected IStatus run(IProgressMonitor monitor) {
 
                 try {
-                    monitor.beginTask("J2OBJC Compiliation", 1);
+                    monitor.beginTask("J2OBJC Compiliation", 3);
 
                     IJavaElement elm = (IJavaElement) strucSelc.getFirstElement();
                     IJavaProject javaProject = (IJavaProject) elm.getJavaProject();
@@ -74,16 +79,37 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                     Map<String, String> props = PropertiesUtil.getProjectProperties(javaProject.getResource());
                     props.put(PreferenceConstants.PATH_TO_COMPILER,
                             Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.PATH_TO_COMPILER));
+                    
+                    //some initial message plumbing
+                    MessageConsole console = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
+                    console.clearConsole();
 
-                    ToObjectiveCDelegate del = new ToObjectiveCDelegate(props, monitor);
-                    elm.getResource().accept(del);
+                    ToObjectiveCDelegate delegate = new ToObjectiveCDelegate(props, monitor);
+                    elm.getResource().accept(delegate);
+                    monitor.worked(1);
+
+                    // copy files to some external directory
+                    monitor.subTask("Exporting Objective-C Classes");
+                    String destinationDir = PropertiesUtil.getOutputDirectory(javaProject);
+                    
+                    if (StringUtils.isNotEmpty(destinationDir)) {
+                        // Ant specific code
+                        String sourceDir = javaProject.getResource().getLocation().makeAbsolute().toOSString();
+                        
+                        AntDelegate antDelegate = new AntDelegate(sourceDir, destinationDir);
+                        antDelegate.executeExport();
+                    }
+                    monitor.worked(2);
 
                     // refresh
                     javaProject.getResource().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                    monitor.worked(1);
+                    monitor.worked(3);
                     monitor.done();
                 } catch (CoreException ce) {
                     LogUtil.logException(ce);
+                    return Status.CANCEL_STATUS;
+                } catch (IOException e) {
+                    LogUtil.logException(e);
                     return Status.CANCEL_STATUS;
                 }
 

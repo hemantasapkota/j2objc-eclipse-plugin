@@ -16,8 +16,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.eclipse.core.internal.utils.FileUtil;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +25,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -284,11 +281,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /**
      * Load user selected classpaths.
-     * 
-     * @throws CoreException
-     *             the core exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void loadUserSelectedClasspaths() throws CoreException, IOException {
         IJavaElement javaPrj = (IJavaElement) getElement();

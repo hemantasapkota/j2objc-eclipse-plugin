@@ -121,7 +121,11 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The lbl bootclasspath. */
     private Label lblBootclasspath;
+    
+    /** The btn mem debug. */
     private Button btnMemDebug;
+    
+    /** The btn generate native stubs. */
     private Button btnGenerateNativeStubs;
 
     /**

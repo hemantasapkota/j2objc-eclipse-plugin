@@ -13,11 +13,21 @@ package com.laex.j2objc.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.MessageConsole;
 
 /**
  * The Class MessageUtil.
  */
 public final class MessageUtil {
+
+    /** The Constant J2OBJC_CONSOLE. */
+    public static final String J2OBJC_CONSOLE = "J2OBJC Conole";
+    
+    /** The Constant NEW_LINE_CONSTANT. */
+    public static final String NEW_LINE_CONSTANT ="\r\n";
 
     /**
      * Message remove items.
@@ -30,6 +40,25 @@ public final class MessageUtil {
         mb.setText("Confirmation");
         mb.setMessage("Are you sure you want to reset/remove all the items ?");
         return mb.open();
+    }
+
+    /**
+     * Find console.
+     *
+     * @param name the name
+     * @return the message console
+     */
+    public static MessageConsole findConsole(String name) {
+        ConsolePlugin plugin = ConsolePlugin.getDefault();
+        IConsoleManager conMan = plugin.getConsoleManager();
+        IConsole[] existing = conMan.getConsoles();
+        for (int i = 0; i < existing.length; i++)
+            if (name.equals(existing[i].getName()))
+                return (MessageConsole) existing[i];
+        // no console found, so create a new one
+        MessageConsole myConsole = new MessageConsole(name, null);
+        conMan.addConsoles(new IConsole[] { myConsole });
+        return myConsole;
     }
 
 }

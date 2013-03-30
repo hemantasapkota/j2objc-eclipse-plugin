@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jdt.core.IJavaProject;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 
@@ -31,13 +32,14 @@ import com.laex.j2objc.preferences.PreferenceConstants;
  */
 public class PropertiesUtil {
 
+    /** The Constant OUTPUT_DIRECTORY_KEY. */
+    public static final QualifiedName OUTPUT_DIRECTORY_KEY = new QualifiedName("", "OUTPUT_DIRECTORY");
+
     /**
      * Checks for property.
-     * 
-     * @param key
-     *            the key
-     * @param prefs
-     *            the prefs
+     *
+     * @param key the key
+     * @param prefs the prefs
      * @return true, if successful
      */
     public static boolean hasProperty(String key, Map<String, String> prefs) {
@@ -49,11 +51,9 @@ public class PropertiesUtil {
 
     /**
      * Checks for text property.
-     * 
-     * @param key
-     *            the key
-     * @param prefs
-     *            the prefs
+     *
+     * @param key the key
+     * @param prefs the prefs
      * @return true, if successful
      */
     public static boolean hasTextProperty(String key, Map<String, String> prefs) {
@@ -66,12 +66,10 @@ public class PropertiesUtil {
 
     /**
      * Checks if is default properties set.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return true, if is default properties set
-     * @throws CoreException
-     *             the core exception
+     * @throws CoreException the core exception
      */
     public static boolean isDefaultPropertiesSet(IResource prj) throws CoreException {
         String firstTimer = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_DEBUGGING_SUPPORT));
@@ -79,11 +77,10 @@ public class PropertiesUtil {
     }
 
     /**
-     * Gets the prefix properties file name.
-     * 
-     * @param project
-     *            the project
-     * @return the prefix properties file name
+     * Construct prefix properties file path.
+     *
+     * @param project the project
+     * @return the string
      */
     public static String constructPrefixPropertiesFilePath(IResource project) {
         return new StringBuilder(".").append(project.getName()).append("-prefixes").toString();
@@ -91,9 +88,8 @@ public class PropertiesUtil {
 
     /**
      * Gets the prefix properties file.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return the prefix properties file
      */
     public static final String getPrefixPropertiesFile(IProject prj) {
@@ -104,9 +100,8 @@ public class PropertiesUtil {
 
     /**
      * Does exist prefix properties file.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return true, if successful
      */
     public static boolean doesExistPrefixPropertiesFile(IProject prj) {
@@ -117,7 +112,7 @@ public class PropertiesUtil {
 
     /**
      * Construct default preferences.
-     * 
+     *
      * @return the map
      */
     public static Map<String, String> constructDefaultPreferences() {
@@ -145,7 +140,7 @@ public class PropertiesUtil {
         prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.TRUE.toString());
         prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.FALSE.toString());
-        
+
         prefMap.put(PreferenceConstants.MEM_DEBUG, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.GENERATE_NATIVE_STUBS, Boolean.FALSE.toString());
 
@@ -155,12 +150,10 @@ public class PropertiesUtil {
 
     /**
      * Gets the project properties.
-     * 
-     * @param prj
-     *            the prj
+     *
+     * @param prj the prj
      * @return the project properties
-     * @throws CoreException
-     *             the core exception
+     * @throws CoreException the core exception
      */
     public static Map<String, String> getProjectProperties(IResource prj) throws CoreException {
 
@@ -189,8 +182,7 @@ public class PropertiesUtil {
         String ignoreMissingImports = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.IGNORE_MISSING_IMPORTS));
         String printConverterdSources = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.PRINT_CONVERTED_SOURCES));
         String timingInfo = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.TIMING_INFO));
-        
-        
+
         String memDebug = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.MEM_DEBUG));
         String generateNativeStubs = prj.getPersistentProperty(new QualifiedName("", PreferenceConstants.GENERATE_NATIVE_STUBS));
 
@@ -230,7 +222,7 @@ public class PropertiesUtil {
         prefs.put(PreferenceConstants.DEAD_CODE_REPORT, deadCodeReportFile);
         prefs.put(PreferenceConstants.METHOD_MAPPING_FILE, methodMappingFile);
         prefs.put(PreferenceConstants.BOOTCLASSPATH, bootclasspath);
-        
+
         prefs.put(PreferenceConstants.MEM_DEBUG, memDebug);
         prefs.put(PreferenceConstants.GENERATE_NATIVE_STUBS, generateNativeStubs);
 
@@ -239,13 +231,10 @@ public class PropertiesUtil {
 
     /**
      * Persist properties.
-     * 
-     * @param prj
-     *            the prj
-     * @param prefs
-     *            the prefs
-     * @throws CoreException
-     *             the core exception
+     *
+     * @param prj the prj
+     * @param prefs the prefs
+     * @throws CoreException the core exception
      */
     public static void persistProperties(IResource prj, Map<String, String> prefs) throws CoreException {
 
@@ -271,25 +260,35 @@ public class PropertiesUtil {
         prj.setPersistentProperty(qkey(PreferenceConstants.IGNORE_MISSING_IMPORTS), prefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS));
         prj.setPersistentProperty(qkey(PreferenceConstants.PRINT_CONVERTED_SOURCES), prefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES));
         prj.setPersistentProperty(qkey(PreferenceConstants.TIMING_INFO), prefs.get(PreferenceConstants.TIMING_INFO));
-        
+
         prj.setPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG), prefs.get(PreferenceConstants.MEM_DEBUG));
         prj.setPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS), prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS));
 
         prj.setPersistentProperty(qkey(PreferenceConstants.DEAD_CODE_REPORT), prefs.get(PreferenceConstants.DEAD_CODE_REPORT));
         prj.setPersistentProperty(qkey(PreferenceConstants.METHOD_MAPPING_FILE), prefs.get(PreferenceConstants.METHOD_MAPPING_FILE));
         prj.setPersistentProperty(qkey(PreferenceConstants.BOOTCLASSPATH), prefs.get(PreferenceConstants.BOOTCLASSPATH));
-        
-        
+
         prj.setPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG), prefs.get(PreferenceConstants.MEM_DEBUG));
         prj.setPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS), prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS));
 
     }
 
     /**
+     * Gets the output directory.
+     *
+     * @param javaProject the java project
+     * @return the output directory
+     * @throws CoreException the core exception
+     */
+    public static String getOutputDirectory(IJavaProject javaProject) throws CoreException {
+        String outputDir = javaProject.getResource().getPersistentProperty(OUTPUT_DIRECTORY_KEY);
+        return outputDir;
+    }
+
+    /**
      * Qkey.
-     * 
-     * @param val
-     *            the val
+     *
+     * @param val the val
      * @return the qualified name
      */
     private static QualifiedName qkey(String val) {
@@ -298,9 +297,8 @@ public class PropertiesUtil {
 
     /**
      * Gets the classpath filename.
-     * 
-     * @param project
-     *            the project
+     *
+     * @param project the project
      * @return the classpath filename
      */
     private static String getClasspathFilename(IProject project) {
@@ -309,14 +307,11 @@ public class PropertiesUtil {
 
     /**
      * Gets the classpath entries.
-     * 
-     * @param project
-     *            the project
+     *
+     * @param project the project
      * @return the classpath entries
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     * @throws CoreException
-     *             the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws CoreException the core exception
      */
     public static Properties getClasspathEntries(IProject project) throws IOException, CoreException {
         String fileName = getClasspathFilename(project);
@@ -333,11 +328,9 @@ public class PropertiesUtil {
 
     /**
      * Persist classpath entries.
-     * 
-     * @param prj
-     *            the prj
-     * @param elements
-     *            the elements
+     *
+     * @param prj the prj
+     * @param elements the elements
      */
     public static void persistClasspathEntries(IProject prj, Object[] elements) {
         String filename = getClasspathFilename(prj);

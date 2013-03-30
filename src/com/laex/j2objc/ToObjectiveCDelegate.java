@@ -23,14 +23,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
+import com.laex.j2objc.util.MessageUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
 /**
@@ -46,11 +44,9 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Instantiates a new to objective c delegate.
-     * 
-     * @param prefs
-     *            the prefs
-     * @param monitor
-     *            the monitor
+     *
+     * @param prefs the prefs
+     * @param monitor the monitor
      */
     public ToObjectiveCDelegate(Map<String, String> prefs, IProgressMonitor monitor) {
         this.prefs = prefs;
@@ -58,41 +54,15 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     }
 
     /**
-     * Find console.
-     * 
-     * @param name
-     *            the name
-     * @return the message console
-     */
-    private MessageConsole findConsole(String name) {
-        ConsolePlugin plugin = ConsolePlugin.getDefault();
-        IConsoleManager conMan = plugin.getConsoleManager();
-        IConsole[] existing = conMan.getConsoles();
-        for (int i = 0; i < existing.length; i++)
-            if (name.equals(existing[i].getName()))
-                return (MessageConsole) existing[i];
-        // no console found, so create a new one
-        MessageConsole myConsole = new MessageConsole(name, null);
-        conMan.addConsoles(new IConsole[] { myConsole });
-        return myConsole;
-    }
-
-    /**
      * Builds the command.
-     * 
-     * @param prefs
-     *            the prefs
-     * @param project
-     *            the project
-     * @param sourcePath
-     *            the source path
-     * @param outputPath
-     *            the output path
+     *
+     * @param prefs the prefs
+     * @param project the project
+     * @param sourcePath the source path
+     * @param outputPath the output path
      * @return the string
-     * @throws CoreException
-     *             the core exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private String buildCommand(Map<String, String> prefs, IProject project, String sourcePath, String outputPath) throws CoreException, IOException {
         StringBuilder sb = new StringBuilder();
@@ -155,8 +125,8 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.MEM_DEBUG, prefs))
             sb.append(PreferenceConstants.MEM_DEBUG).append(" ");
-        
-         if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_NATIVE_STUBS, prefs))
+
+        if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_NATIVE_STUBS, prefs))
             sb.append(PreferenceConstants.GENERATE_NATIVE_STUBS).append(" ");
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.TIMING_INFO, prefs))
@@ -216,26 +186,28 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
             monitor.subTask(resource.getName());
 
-            Process p;
-            p = Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec(cmd);
+
             Scanner scanInput = new Scanner(p.getInputStream());
             Scanner scanErr = new Scanner(p.getErrorStream());
 
-            MessageConsole mc = findConsole("J2OBJC Console");
+            MessageConsole mc = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
             MessageConsoleStream mst = mc.newMessageStream();
+            
             mst.write(cmd);
-            mst.write("\r\n");
+            mst.write(MessageUtil.NEW_LINE_CONSTANT);
 
             while (scanInput.hasNext()) {
                 mst.write(scanInput.nextLine());
-                mst.write("\r\n");
-
+                mst.write(MessageUtil.NEW_LINE_CONSTANT);
             }
 
             while (scanErr.hasNext()) {
                 mst.write(scanErr.nextLine());
-                mst.write("\r\n");
+                mst.write(MessageUtil.NEW_LINE_CONSTANT);
             }
+            
+            mst.write(MessageUtil.NEW_LINE_CONSTANT);
 
         } catch (IOException e) {
             LogUtil.logException(e);
