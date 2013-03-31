@@ -21,6 +21,8 @@ import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
@@ -38,6 +40,7 @@ public class AntDelegate {
     /** The destination dir. */
     private String destinationDir;
 
+    /** The java project. */
     private IJavaProject javaProject;
 
     /**
@@ -53,11 +56,11 @@ public class AntDelegate {
 
         /**
          * Instantiates a new eclipe console build logger.
-         * 
-         * @param msgConsole
-         *            the msg console
+         *
+         * @param display the display
+         * @param msgConsole the msg console
          */
-        public EclipeConsoleBuildLogger(MessageConsole msgConsole) {
+        public EclipeConsoleBuildLogger(Display display, MessageConsole msgConsole) {
             super();
 
             setMessageOutputLevel(Project.MSG_ERR);
@@ -67,6 +70,8 @@ public class AntDelegate {
             this.msgConsole = msgConsole;
             msgConsoleStream = this.msgConsole.newMessageStream();
             msgConsoleStream.setActivateOnWrite(true);
+            
+            MessageUtil.setConsoleColor(display, msgConsoleStream, SWT.COLOR_BLUE);
         }
 
         /*
@@ -112,11 +117,10 @@ public class AntDelegate {
 
     /**
      * Instantiates a new ant delegate.
-     * 
-     * @param sourceDir
-     *            the source dir
-     * @param destinationDir
-     *            the destination dir
+     *
+     * @param javaProject the java project
+     * @param sourceDir the source dir
+     * @param destinationDir the destination dir
      */
     public AntDelegate(IJavaProject javaProject, String sourceDir, String destinationDir) {
         this.javaProject = javaProject;
@@ -126,12 +130,12 @@ public class AntDelegate {
 
     /**
      * Execute export.
-     * 
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     * @throws CoreException 
+     *
+     * @param display the display
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws CoreException the core exception
      */
-    public void executeExport() throws IOException, CoreException {
+    public void executeExport(Display display) throws IOException, CoreException {
         // Resolve file from the plugin
         URL url = new URL("platform:/plugin/j2objc-eclipse-plugin/exportANT.xml");
         InputStream is = url.openConnection().getInputStream();
@@ -141,7 +145,6 @@ public class AntDelegate {
         }
  
         String tmpAntFile = tmpFile.getLocation().makeAbsolute().toOSString();
-        LogUtil.logMessage("ANT file: " + tmpAntFile);
 
         Project exportObjCFilesProject = new Project();
         
@@ -156,7 +159,7 @@ public class AntDelegate {
 
         MessageConsole console = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
 
-        exportObjCFilesProject.addBuildListener(new EclipeConsoleBuildLogger(console));
+        exportObjCFilesProject.addBuildListener(new EclipeConsoleBuildLogger(display, console));
 
         helper.parse(exportObjCFilesProject, tmpFile.getLocation().toFile());
 

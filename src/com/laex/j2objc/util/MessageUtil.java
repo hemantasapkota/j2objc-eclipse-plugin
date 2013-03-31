@@ -11,12 +11,14 @@
 package com.laex.j2objc.util;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
  * The Class MessageUtil.
@@ -40,6 +42,37 @@ public final class MessageUtil {
         mb.setText("Confirmation");
         mb.setMessage("Are you sure you want to reset/remove all the items ?");
         return mb.open();
+    }
+    
+    /**
+     * Sets the console color.
+     *
+     * @param display the display
+     * @param mst the mst
+     * @param color the color
+     */
+    public static void setConsoleColor(final Display display, final MessageConsoleStream mst, final int color) {
+        display.asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                mst.setColor(display.getSystemColor(color));
+            }
+        });
+    }
+    
+    /**
+     * Reset console color.
+     *
+     * @param display the display
+     * @param mst the mst
+     */
+    public static void resetConsoleColor(final Display display, final MessageConsoleStream mst) {
+        display.asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                mst.setColor(null);
+            }
+        });
     }
 
     /**

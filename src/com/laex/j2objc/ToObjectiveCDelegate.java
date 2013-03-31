@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
@@ -42,13 +44,18 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     /** The monitor. */
     private IProgressMonitor monitor;
 
+    /** The display. */
+    private Display display;
+
     /**
      * Instantiates a new to objective c delegate.
      *
+     * @param display the display
      * @param prefs the prefs
      * @param monitor the monitor
      */
-    public ToObjectiveCDelegate(Map<String, String> prefs, IProgressMonitor monitor) {
+    public ToObjectiveCDelegate(Display display, Map<String, String> prefs, IProgressMonitor monitor) {
+        this.display = display;
         this.prefs = prefs;
         this.monitor = monitor;
     }
@@ -192,21 +199,23 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
             Scanner scanErr = new Scanner(p.getErrorStream());
 
             MessageConsole mc = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
-            MessageConsoleStream mst = mc.newMessageStream();
-            
+            final MessageConsoleStream mst = mc.newMessageStream();
+
             mst.write(cmd);
             mst.write(MessageUtil.NEW_LINE_CONSTANT);
 
             while (scanInput.hasNext()) {
+                MessageUtil.resetConsoleColor(display, mst);
                 mst.write(scanInput.nextLine());
                 mst.write(MessageUtil.NEW_LINE_CONSTANT);
             }
 
             while (scanErr.hasNext()) {
+                MessageUtil.setConsoleColor(display, mst, SWT.COLOR_RED);
                 mst.write(scanErr.nextLine());
                 mst.write(MessageUtil.NEW_LINE_CONSTANT);
             }
-            
+
             mst.write(MessageUtil.NEW_LINE_CONSTANT);
 
         } catch (IOException e) {

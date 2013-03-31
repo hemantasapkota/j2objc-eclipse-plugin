@@ -27,9 +27,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
@@ -80,10 +83,11 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                             Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.PATH_TO_COMPILER));
                     
                     //some initial message plumbing
+                    Display display = targetPart.getSite().getShell().getDisplay();
                     MessageConsole console = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
                     console.clearConsole();
 
-                    ToObjectiveCDelegate delegate = new ToObjectiveCDelegate(props, monitor);
+                    ToObjectiveCDelegate delegate = new ToObjectiveCDelegate(display, props, monitor);
                     elm.getResource().accept(delegate);
                     monitor.worked(1);
 
@@ -96,7 +100,11 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                         String sourceDir = javaProject.getResource().getLocation().makeAbsolute().toOSString();
                         
                         AntDelegate antDelegate = new AntDelegate(javaProject, sourceDir, destinationDir);
-                        antDelegate.executeExport();
+                        antDelegate.executeExport(display);
+                    } else {
+                        MessageConsoleStream mst = console.newMessageStream();
+                        MessageUtil.setConsoleColor(display, mst, SWT.COLOR_BLUE);
+                        mst.write("No Output directory specified. Files will not be exported.");
                     }
                     monitor.worked(2);
 
