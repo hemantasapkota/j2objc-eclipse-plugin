@@ -10,18 +10,17 @@
  */
 package com.laex.j2objc;
 
-import j2objc_eclipse_plugin.Activator;
-
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
-import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
@@ -35,9 +34,11 @@ public class AntDelegate {
 
     /** The source dir. */
     private String sourceDir;
-    
+
     /** The destination dir. */
     private String destinationDir;
+
+    private IJavaProject javaProject;
 
     /**
      * The Class EclipeConsoleBuildLogger.
@@ -46,14 +47,15 @@ public class AntDelegate {
 
         /** The msg console. */
         private MessageConsole msgConsole;
-        
+
         /** The msg console stream. */
         private MessageConsoleStream msgConsoleStream;
 
         /**
          * Instantiates a new eclipe console build logger.
-         *
-         * @param msgConsole the msg console
+         * 
+         * @param msgConsole
+         *            the msg console
          */
         public EclipeConsoleBuildLogger(MessageConsole msgConsole) {
             super();
@@ -67,8 +69,12 @@ public class AntDelegate {
             msgConsoleStream.setActivateOnWrite(true);
         }
 
-        /* (non-Javadoc)
-         * @see org.apache.tools.ant.DefaultLogger#targetStarted(org.apache.tools.ant.BuildEvent)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.apache.tools.ant.DefaultLogger#targetStarted(org.apache.tools
+         * .ant.BuildEvent)
          */
         @Override
         public void targetStarted(BuildEvent event) {
@@ -85,8 +91,12 @@ public class AntDelegate {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.apache.tools.ant.DefaultLogger#targetFinished(org.apache.tools.ant.BuildEvent)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.apache.tools.ant.DefaultLogger#targetFinished(org.apache.tools
+         * .ant.BuildEvent)
          */
         @Override
         public void targetFinished(BuildEvent event) {
@@ -102,29 +112,40 @@ public class AntDelegate {
 
     /**
      * Instantiates a new ant delegate.
-     *
-     * @param sourceDir the source dir
-     * @param destinationDir the destination dir
+     * 
+     * @param sourceDir
+     *            the source dir
+     * @param destinationDir
+     *            the destination dir
      */
-    public AntDelegate(String sourceDir, String destinationDir) {
+    public AntDelegate(IJavaProject javaProject, String sourceDir, String destinationDir) {
+        this.javaProject = javaProject;
         this.sourceDir = sourceDir;
         this.destinationDir = destinationDir;
     }
 
     /**
      * Execute export.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * 
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     * @throws CoreException 
      */
-    public void executeExport() throws IOException {
+    public void executeExport() throws IOException, CoreException {
         // Resolve file from the plugin
-        URL url = Activator.getDefault().getBundle().getEntry("exportANT.xml");
-        url = FileLocator.resolve(url);
-        File exportANTFile = FileUtils.toFile(url);
+        URL url = new URL("platform:/plugin/j2objc-eclipse-plugin/exportANT.xml");
+        InputStream is = url.openConnection().getInputStream();
+        IFile tmpFile = javaProject.getProject().getFile(".exportANT.xml");
+        if (!tmpFile.exists()) {
+            tmpFile.create(is, false, null);
+        }
+ 
+        String tmpAntFile = tmpFile.getLocation().makeAbsolute().toOSString();
+        LogUtil.logMessage("ANT file: " + tmpAntFile);
 
         Project exportObjCFilesProject = new Project();
-
-        exportObjCFilesProject.setUserProperty("ant.file", exportANTFile.getAbsolutePath());
+        
+        exportObjCFilesProject.setUserProperty("ant.file", tmpAntFile);
         exportObjCFilesProject.init();
 
         ProjectHelper helper = ProjectHelper.getProjectHelper();
@@ -137,9 +158,10 @@ public class AntDelegate {
 
         exportObjCFilesProject.addBuildListener(new EclipeConsoleBuildLogger(console));
 
-        helper.parse(exportObjCFilesProject, exportANTFile);
+        helper.parse(exportObjCFilesProject, tmpFile.getLocation().toFile());
 
         exportObjCFilesProject.executeTarget(exportObjCFilesProject.getDefaultTarget());
+        
+        tmpFile.delete(true, null);
     }
-
 }

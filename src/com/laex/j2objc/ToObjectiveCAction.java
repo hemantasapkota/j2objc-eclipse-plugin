@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
 import com.laex.j2objc.util.LogUtil;
@@ -96,7 +95,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                         // Ant specific code
                         String sourceDir = javaProject.getResource().getLocation().makeAbsolute().toOSString();
                         
-                        AntDelegate antDelegate = new AntDelegate(sourceDir, destinationDir);
+                        AntDelegate antDelegate = new AntDelegate(javaProject, sourceDir, destinationDir);
                         antDelegate.executeExport();
                     }
                     monitor.worked(2);

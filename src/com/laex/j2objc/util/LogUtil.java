@@ -27,5 +27,15 @@ public final class LogUtil {
     public static void logException(Exception e) {
         Activator.getDefault().getLog().log(new Status(Status.ERROR, Activator.PLUGIN_ID, e.getMessage()));
     }
+    
+    /**
+     * Log message.
+     *
+     * @param message the message
+     */
+    public static void logMessage(String message) {
+        Activator.getDefault().getLog().log(new Status(Status.INFO, Activator.PLUGIN_ID, message));
+    }
+    
 
 }
