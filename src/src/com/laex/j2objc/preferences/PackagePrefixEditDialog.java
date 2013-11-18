@@ -43,6 +43,7 @@ public class PackagePrefixEditDialog extends Dialog {
      * Instantiates a new package prefix edit dialog.
      *
      * @param parentShell the parent shell
+     * @wbp.parser.constructor
      */
     public PackagePrefixEditDialog(Shell parentShell) {
         super(parentShell);
@@ -54,10 +55,11 @@ public class PackagePrefixEditDialog extends Dialog {
      * @param parentShell the parent shell
      * @param pkg the pkg
      */
-    public PackagePrefixEditDialog(Shell parentShell, String pkg) {
+    public PackagePrefixEditDialog(Shell parentShell, String pkg, String prefix) {
         super(parentShell);
 
         this.pkg = pkg;
+        this.prefix = prefix;
     }
 
     /*
@@ -89,6 +91,8 @@ public class PackagePrefixEditDialog extends Dialog {
         txtPrefix = new Text(container, SWT.BORDER);
         txtPrefix.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtPrefix.setFocus();
+
+        txtPrefix.setText(prefix);
 
         return container;
     }

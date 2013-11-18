@@ -34,9 +34,13 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
@@ -63,6 +67,8 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     /** The checkbox table viewer. */
     private CheckboxTableViewer checkboxTableViewer;
 
+    private Button btnUseAllClasspathLibraries;
+
     /**
      * The Class TableLabelProvider.
      */
@@ -76,12 +82,15 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
          * .lang.Object, int)
          */
         public Image getColumnImage(Object element, int columnIndex) {
-            String elm = (String) element;
-            if (elm.endsWith("jar") || elm.endsWith("zip")) {
-                return new org.eclipse.jdt.internal.ui.SharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+            if (columnIndex == 0) {
+                String elm = (String) element;
+                if (elm.endsWith("jar") || elm.endsWith("zip")) {
+                    return new org.eclipse.jdt.internal.ui.SharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+                } else
+                    return new SharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
             }
 
-            return new SharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+            return null;
         }
 
         /*
@@ -92,6 +101,11 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
          * lang.Object, int)
          */
         public String getColumnText(Object element, int columnIndex) {
+            if (columnIndex == 0) {
+                Path p = new Path((String) element);
+                return p.lastSegment();
+            }
+
             return (String) element;
         }
     }
@@ -154,16 +168,33 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         Composite container = new Composite(parent, SWT.NULL);
         container.setLayout(new GridLayout(1, false));
 
-        checkboxTableViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.FULL_SELECTION);
+        btnUseAllClasspathLibraries = new Button(container, SWT.CHECK);
+        btnUseAllClasspathLibraries.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                useAllClasspathLibs();
+            }
+        });
+        btnUseAllClasspathLibraries.setText("Use all classpath libraries");
+
+        Composite composite = new Composite(container, SWT.NONE);
+        composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+        GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        gd_composite.widthHint = 358;
+        gd_composite.heightHint = 308;
+        composite.setLayoutData(gd_composite);
+
+        checkboxTableViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.FULL_SELECTION);
         table = checkboxTableViewer.getTable();
         table.setHeaderVisible(true);
-        GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-        gd_table.heightHint = 338;
-        table.setLayoutData(gd_table);
 
         TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
-        TableColumn tblclmnClasspath = tableViewerColumn.getColumn();
-        tblclmnClasspath.setWidth(295);
+        TableColumn tblclmnLibraryName = tableViewerColumn.getColumn();
+        tblclmnLibraryName.setWidth(116);
+        tblclmnLibraryName.setText("Library");
+
+        TableColumn tblclmnClasspath = new TableColumn(table, SWT.NONE);
+        tblclmnClasspath.setWidth(400);
         tblclmnClasspath.setText("Classpath");
 
         checkboxTableViewer.setContentProvider(new ContentProvider());
@@ -194,21 +225,26 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
                 IClasspathEntry entry = JavaCore.getResolvedClasspathEntry((IClasspathEntry) o);
                 String path = null;
 
-                //We need to figure out the path for different types of classpath entries.
-                // the types of entries are: CPE_LIBRARY, CPE_PROJECT, CPE_SOURCE, CPE_VARIABLE, CPE_CONTAINER
+                // We need to figure out the path for different types of
+                // classpath entries.
+                // the types of entries are: CPE_LIBRARY, CPE_PROJECT,
+                // CPE_SOURCE, CPE_VARIABLE, CPE_CONTAINER
                 switch (entry.getEntryKind()) {
                 case IClasspathEntry.CPE_LIBRARY:
 
-                    //With CPE Library: some jar files could reside in system, like JDK jar files
-                    //some jar files may reside in workspace, within other project.
-                    //Check if the library resides in workspace project
+                    // With CPE Library: some jar files could reside in system,
+                    // like JDK jar files
+                    // some jar files may reside in workspace, within other
+                    // project.
+                    // Check if the library resides in workspace project
                     IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
-                    //null means, this library does not reside in workspace but instead in the system
+                    // null means, this library does not reside in workspace but
+                    // instead in the system
                     if (file == null) {
-                        //get the apropriate path
+                        // get the apropriate path
                         path = entry.getPath().makeAbsolute().toOSString();
                     } else {
-                        //if resdies in workspace, get the appropriate path
+                        // if resdies in workspace, get the appropriate path
                         if (file.exists()) {
                             path = file.getLocation().makeAbsolute().toOSString();
                         }
@@ -218,7 +254,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
                 case IClasspathEntry.CPE_PROJECT:
                 case IClasspathEntry.CPE_SOURCE:
-                    //project and source
+                    // project and source
                     IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(entry.getPath());
                     if (res.exists()) {
                         path = res.getFullPath().makeAbsolute().toOSString();
@@ -260,6 +296,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
             checkboxTableViewer.setInput(classpathRef);
             checkboxTableViewer.refresh();
+
         } catch (JavaModelException e) {
             LogUtil.logException(e);
         }
@@ -281,9 +318,11 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
     /**
      * Load user selected classpaths.
-     *
-     * @throws CoreException the core exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * 
+     * @throws CoreException
+     *             the core exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private void loadUserSelectedClasspaths() throws CoreException, IOException {
         IJavaElement javaPrj = (IJavaElement) getElement();
@@ -295,5 +334,11 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
             }
         }
 
+        btnUseAllClasspathLibraries.setSelection(checkboxTableViewer.getCheckedElements().length == classpathRef.size());
+    }
+
+    private void useAllClasspathLibs() {
+        checkboxTableViewer.setAllChecked(btnUseAllClasspathLibraries.getSelection());
+        checkboxTableViewer.refresh();
     }
 }

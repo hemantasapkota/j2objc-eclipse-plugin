@@ -295,7 +295,12 @@ public class PackagePrefixPropertyPage extends PropertyPage {
      */
     protected void editPrefix() {
         String selectedPkg = getSelectedPackage();
-        PackagePrefixEditDialog pped = new PackagePrefixEditDialog(getShell(), selectedPkg);
+        String p = pkgPrefix.getProperty(selectedPkg);
+        
+        if (p == null)
+            p = "";
+
+        PackagePrefixEditDialog pped = new PackagePrefixEditDialog(getShell(), selectedPkg, p);
 
         if (pped.open() == PackagePrefixEditDialog.OK) {
             String prefix = pped.getPrefix();
@@ -369,13 +374,11 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         IFile propertiesFile = javaProject.getProject().getFile(propertiesFilePath);
 
         if (propertiesFile.exists()) {
-
             try {
                 propertiesFile.delete(true, null);
             } catch (CoreException e) {
                 LogUtil.logException(e);
             }
-
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

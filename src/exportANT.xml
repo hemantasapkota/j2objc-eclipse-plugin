@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="Export-ObjectiveC-Files" name="Export J2OBJC Eclipse Plugin Generated Objective-C/C++ Source to Some External Directory Specified by the User">
+
 	<target name="Export-ObjectiveC-Files">
 		
 		<property name="EXPORT_DIRECTORY" value=""/>
@@ -13,5 +14,12 @@
 				<exclude name="bin/*" />
 			</fileset>
 		</move>
+	</target>
+
+	<target name="CLEANUP">
+	    <property name="PROJECT_NAME" value=""/>
+
+	    <delete file=".${PROJECT_NAME}-classpath"/>
+	    <delete file=".${PROJECT_NAME}-prefixes"/>
 	</target>
 </project>

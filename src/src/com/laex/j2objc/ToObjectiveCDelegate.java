@@ -169,6 +169,8 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     public boolean visit(final IResource resource) throws CoreException {
         // cancel the job
         if (monitor.isCanceled()) {
+            onCancelled();
+            monitor.done();
             resource.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
             return false;
         }
@@ -225,5 +227,17 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         monitor.worked(1);
 
         return true;
+    }
+
+    private void onCancelled() {
+        MessageConsole mc = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
+        MessageConsoleStream mct = mc.newMessageStream();
+        MessageUtil.setConsoleColor(display, mct, SWT.COLOR_RED);
+
+        try {
+            mct.write("J2OBJC compilation cancelled!!");
+        } catch (IOException e) {
+            LogUtil.logException(e);
+        }
     }
 }
