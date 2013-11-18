@@ -1,15 +1,17 @@
-j2objc-eclipse-plugin
+J2OBJC-ECLIPSE-PLUGIN
 =====================
 
 Eclipse plugin source code for Google's J2OBJC - A Java to iOS Objective-C translation tool and runtime.
 
 Installation
 =====================
-You can install the plugin via the update site
+You can install the plugin via the update sites:
 
-Eclipse Indigo - http://j2objc-updatesite.hsapkota.com.au/3.7/
+Eclipse Kepler - http://j2objc-updatesite.hsapkota.com.au/4.3/
 
 Eclipse Juno - http://j2objc-updatesite.hsapkota.com.au/4.2/
+
+Eclipse Indigo - http://j2objc-updatesite.hsapkota.com.au/3.7/
 
 Usage
 =====================

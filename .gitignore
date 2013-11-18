@@ -1,3 +1,8 @@
 .DS_Store
 .class
 bin/
+*.jar
+j2objc-update-site/features
+j2objc-update-site/plugins
+j2objc-update-site/web
+
