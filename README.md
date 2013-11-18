@@ -1,4 +1,4 @@
-J2OBJC-ECLIPSE-PLUGIN
+J2OBJC ECLIPSE PLUGIN
 =====================
 
 Eclipse plugin source code for Google's J2OBJC - A Java to iOS Objective-C translation tool and runtime.
