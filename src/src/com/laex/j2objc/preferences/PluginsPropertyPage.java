@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PluginsPropertyPage.
  */

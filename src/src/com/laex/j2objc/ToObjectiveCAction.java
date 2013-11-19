@@ -12,7 +12,6 @@ package com.laex.j2objc;
 
 import j2objc_eclipse_plugin.Activator;
 
-import java.beans.DesignMode;
 import java.io.IOException;
 import java.util.Map;
 
@@ -93,19 +92,20 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
         final Display display = targetPart.getSite().getShell().getDisplay();
         final String pathToCompiler = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.PATH_TO_COMPILER);
 
+        console.clearConsole();
+        MessageConsoleStream mct = console.newMessageStream();
+
         if (StringUtils.isEmpty(pathToCompiler)) {
             try {
-                console.clearConsole();
-                MessageConsoleStream mst = console.newMessageStream();
-                MessageUtil.setConsoleColor(display, mst, SWT.COLOR_RED);
-                mst.write("Path to compiler empty. Please set the path to J2OBJC compiler from global preferences.");
+                MessageUtil.setConsoleColor(display, mct, SWT.COLOR_RED);
+                mct.write("Path to compiler empty. Please set the path to J2OBJC compiler from global preferences.");
             } catch (IOException e) {
                 LogUtil.logException(e);
             }
             return;
         }
-        
-        /*Before starting the job, calculate total no. of files to compile */
+
+        /* Before starting the job, calculate total no. of files to compile */
         calculateWork();
 
         // Start the job
@@ -123,10 +123,11 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                     props.put(PreferenceConstants.PATH_TO_COMPILER, pathToCompiler);
 
                     // some initial message plumbing
-                    console.clearConsole();
+                    ToObjectiveCDelegate.clearPrebuiltSwitch();
 
                     ToObjectiveCDelegate delegate = new ToObjectiveCDelegate(display, props, monitor);
                     elm.getResource().accept(delegate);
+                    monitor.worked(1);
 
                     // copy files to some external directory
                     monitor.subTask("Exporting Objective-C Classes");
@@ -160,9 +161,9 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                     AntDelegate antDelegate = new AntDelegate(javaProject);
                     antDelegate.executeExport(display, sourceDir, destinationDir);
                 } else {
-                    MessageConsoleStream mst = console.newMessageStream();
-                    MessageUtil.setConsoleColor(display, mst, SWT.COLOR_BLUE);
-                    mst.write("No Output directory specified. Files will not be exported.");
+                    MessageConsoleStream mct = console.newMessageStream();
+                    MessageUtil.setConsoleColor(display, mct, SWT.COLOR_BLUE);
+                    mct.write("No Output directory specified. Files will not be exported.");
                 }
             }
         };
@@ -196,9 +197,10 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
         this.targetPart = targetPart;
     }
 
-    private void calculateWork()
-    {
+    private void calculateWork() {
         IJavaElement elm = (IJavaElement) strucSelc.getFirstElement();
+
+        totalWork = 0;
 
         try {
             elm.getResource().accept(new IResourceVisitor() {
@@ -209,11 +211,11 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
                         return true;
                     }
 
-                    if (!JavaCore.isJavaLikeFileName(resource.getName())) {
+                    if (JavaCore.isJavaLikeFileName(resource.getName())) {
+                        System.err.println(resource.getName());
+                        totalWork++;
                         return true;
                     }
-
-                    totalWork++;
 
                     return true;
                 }

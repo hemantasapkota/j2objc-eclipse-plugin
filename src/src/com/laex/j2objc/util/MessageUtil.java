@@ -26,7 +26,7 @@ import org.eclipse.ui.console.MessageConsoleStream;
 public final class MessageUtil {
 
     /** The Constant J2OBJC_CONSOLE. */
-    public static final String J2OBJC_CONSOLE = "J2OBJC Conole";
+    public static final String J2OBJC_CONSOLE = "J2OBJC Console";
     
     /** The Constant NEW_LINE_CONSTANT. */
     public static final String NEW_LINE_CONSTANT ="\r\n";
@@ -41,6 +41,13 @@ public final class MessageUtil {
         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.CANCEL);
         mb.setText("Confirmation");
         mb.setMessage("Are you sure you want to reset/remove all the items ?");
+        return mb.open();
+    }
+
+    public static int messageSetAllPrefixBlank(Shell shell) {
+        MessageBox mb = new MessageBox(shell, SWT.OK | SWT.CANCEL);
+        mb.setText("Confirmation");
+        mb.setMessage("This action will set all the package prefixes to blank. Do you want to continue ?");
         return mb.open();
     }
     

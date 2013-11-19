@@ -198,7 +198,6 @@ public class AntDelegate {
         exportObjCFilesProject.setProperty("SOURCE_DIRECTORY", sourceDir);
 
         MessageConsole console = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
-        console.clearConsole();
 
         exportObjCFilesProject.addBuildListener(new EclipeConsoleBuildLogger(display, console));
 

@@ -10,7 +10,6 @@
  */
 package com.laex.j2objc.preferences;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PreferenceConstants.
  */
@@ -102,6 +101,22 @@ public class PreferenceConstants {
 
     /** The Constant BOOTCLASSPATH. */
     public static final String BOOTCLASSPATH = "-Xbootclasspath";
+
+    /* Changes from 0.8.7 */
+
+    public static final String BUILD_CLOSURE = "--build-closure";
+
+    public static final String ENCODING = "-encoding";
+
+    public static final String GENERATE_DEPRECATED = "--generate-deprecated";
+
+    public static final String STRIP_REFLECTION = "--strip-reflection";
+
+    public static final String STRIP_GWT_INCOMPATIBLE = "--strip-gwt-incompatible";
+
+    public static final String SEGMENTED_HEADERS = "--segmented-headers";
+
+    /* End changes from 0.8.7 */
 
     /** The Constant HELP. */
     public static final String HELP = "--help";

@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -92,9 +94,6 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
     /** The btn ignore missing imports. */
     private Button btnIgnoreMissingImports;
 
-    /** The grp proguard dead code. */
-    private Group grpProguardDeadCode;
-
     /** The txt proguard file. */
     private Text txtProguardFile;
 
@@ -116,17 +115,22 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
     /** The lbl proguard dead code. */
     private Label lblProguardDeadCode;
 
-    /** The lbl method mapping file. */
-    private Label lblMethodMappingFile;
-
-    /** The lbl bootclasspath. */
-    private Label lblBootclasspath;
-    
     /** The btn mem debug. */
     private Button btnMemDebug;
-    
+
     /** The btn generate native stubs. */
     private Button btnGenerateNativeStubs;
+    private TabItem tbtmNewItem;
+    private TabItem tbtmProguard;
+    private Composite composite;
+    private Button btnBuildClosure;
+    private Button btnGenerateDeprecated;
+    private Button btnStripReflection;
+    private Button btnGwtIncompatible;
+    private Label label;
+    private Label label_1;
+
+    private Button btnSegmentedHeaders;
 
     /**
      * Instantiates a new j2 obj c property page.
@@ -143,181 +147,218 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
      * .swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
-        composite_2 = new Composite(parent, SWT.NONE);
-        GridLayout gl_composite_2 = new GridLayout();
-        composite_2.setLayout(gl_composite_2);
-        GridData data = new GridData(GridData.FILL);
-        data.grabExcessHorizontalSpace = true;
-        composite_2.setLayoutData(data);
 
+        TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
         {
-            btnGenerateDebugSupport = new Button(composite_2, SWT.CHECK);
-            btnGenerateDebugSupport.setText("Generate debugging support");
-        }
-        {
-            btnNoPackageDir = new Button(composite_2, SWT.CHECK);
-            btnNoPackageDir.setText("Generate output files to specified directory, without create package sub-directories");
-        }
-        Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        separator.setLayoutData(gridData);
+            tbtmNewItem = new TabItem(tabFolder, SWT.NONE);
+            tbtmNewItem.setText("Basic");
+            composite_2 = new Composite(tabFolder, SWT.NONE);
+            tbtmNewItem.setControl(composite_2);
 
-        {
-            Group grpLanguage = new Group(composite_2, SWT.NONE);
-            grpLanguage.setLayout(new RowLayout(SWT.HORIZONTAL));
-            grpLanguage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-            grpLanguage.setText("Language");
-            {
-                btnLangObjectiveC = new Button(grpLanguage, SWT.RADIO);
-                btnLangObjectiveC.setText("Objective C");
-            }
-            {
-                btnLangObjectiveCPP = new Button(grpLanguage, SWT.RADIO);
-                btnLangObjectiveCPP.setText("Objective C++");
-            }
-        }
-        {
-            Group grpMemoryManagement = new Group(composite_2, SWT.NONE);
-            grpMemoryManagement.setLayout(new RowLayout(SWT.VERTICAL));
-            grpMemoryManagement.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-            grpMemoryManagement.setText("Memory Management");
+            GridLayout gl_composite_2 = new GridLayout();
+            composite_2.setLayout(gl_composite_2);
 
-            btnMemManualRef = new Button(grpMemoryManagement, SWT.RADIO);
-            btnMemManualRef.setText("Generate Objective-C code to support iOS manual reference counting");
+            {
+                btnGenerateDebugSupport = new Button(composite_2, SWT.CHECK);
+                btnGenerateDebugSupport.setText("Generate debugging support");
+            }
+            {
+                btnNoPackageDir = new Button(composite_2, SWT.CHECK);
+                btnNoPackageDir.setText("Generate output files to specified directory, without create package sub-directories");
+            }
 
-            btnMemGC = new Button(grpMemoryManagement, SWT.RADIO);
-            btnMemGC.setText("Generate Objective-C code to support garbage collection (requires libjre_emul.a rebuild)");
             {
-                btnMemARC = new Button(grpMemoryManagement, SWT.RADIO);
-                btnMemARC.setText("Generate Objective-C code to support Automatic Reference Counting (ARC)");
-            }
-        }
-        {
-            Group grpWarningsErrorAnd = new Group(composite_2, SWT.NONE);
-            grpWarningsErrorAnd.setLayout(new RowLayout(SWT.HORIZONTAL));
-            grpWarningsErrorAnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-            grpWarningsErrorAnd.setText("Warnings, Error and Output");
-            {
-                btnMakeErrorsToWarnings = new Button(grpWarningsErrorAnd, SWT.CHECK);
-                btnMakeErrorsToWarnings.setText("Make all errors into warnings");
+                Group grpLanguage = new Group(composite_2, SWT.NONE);
+                grpLanguage.setLayout(new RowLayout(SWT.HORIZONTAL));
+                grpLanguage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+                grpLanguage.setText("Language");
+                {
+                    btnLangObjectiveC = new Button(grpLanguage, SWT.RADIO);
+                    btnLangObjectiveC.setText("Objective C");
+                }
+                {
+                    btnLangObjectiveCPP = new Button(grpLanguage, SWT.RADIO);
+                    btnLangObjectiveCPP.setText("Objective C++");
+                }
             }
             {
-                btnQuiet = new Button(grpWarningsErrorAnd, SWT.CHECK);
-                btnQuiet.setText("Do no print status mesasges");
+                Group grpMemoryManagement = new Group(composite_2, SWT.NONE);
+                grpMemoryManagement.setLayout(new RowLayout(SWT.VERTICAL));
+                grpMemoryManagement.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+                grpMemoryManagement.setText("Memory Management");
+
+                btnMemManualRef = new Button(grpMemoryManagement, SWT.RADIO);
+                btnMemManualRef.setText("Generate Objective-C code to support iOS manual reference counting");
+
+                btnMemGC = new Button(grpMemoryManagement, SWT.RADIO);
+                btnMemGC.setText("Generate Objective-C code to support garbage collection (requires libjre_emul.a rebuild)");
+                {
+                    btnMemARC = new Button(grpMemoryManagement, SWT.RADIO);
+                    btnMemARC.setText("Generate Objective-C code to support Automatic Reference Counting (ARC)");
+                }
             }
             {
-                btnVerbose = new Button(grpWarningsErrorAnd, SWT.CHECK);
-                btnVerbose.setText("Verbose");
+                Group grpWarningsErrorAnd = new Group(composite_2, SWT.NONE);
+                grpWarningsErrorAnd.setLayout(new RowLayout(SWT.HORIZONTAL));
+                grpWarningsErrorAnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+                grpWarningsErrorAnd.setText("Warnings, Error and Output");
+                {
+                    btnMakeErrorsToWarnings = new Button(grpWarningsErrorAnd, SWT.CHECK);
+                    btnMakeErrorsToWarnings.setText("Make all warnings into errors");
+                }
+                {
+                    btnQuiet = new Button(grpWarningsErrorAnd, SWT.CHECK);
+                    btnQuiet.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            btnVerbose.setSelection(false);
+                        }
+                    });
+                    btnQuiet.setText("Do no print status mesasges");
+                }
+                {
+                    btnVerbose = new Button(grpWarningsErrorAnd, SWT.CHECK);
+                    btnVerbose.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            btnQuiet.setSelection(false);
+                        }
+                    });
+                    btnVerbose.setText("Verbose");
+                }
             }
-        }
-        {
-            grpOthers = new Group(composite_2, SWT.NONE);
-            grpOthers.setLayout(new RowLayout(SWT.VERTICAL));
-            grpOthers.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-            grpOthers.setText("Others");
             {
-                btnNoInlineFieldAccess = new Button(grpOthers, SWT.CHECK);
-                btnNoInlineFieldAccess.setText("Turn off in-lining of generated field accessors.");
+                grpOthers = new Group(composite_2, SWT.NONE);
+                grpOthers.setLayout(new RowLayout(SWT.VERTICAL));
+                grpOthers.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+                grpOthers.setText("Others");
+                {
+                    btnBuildClosure = new Button(grpOthers, SWT.CHECK);
+                    btnBuildClosure.setText("Translate dependent classes if out-of-date ( build-closure )");
+                }
+                {
+                    btnNoInlineFieldAccess = new Button(grpOthers, SWT.CHECK);
+                    btnNoInlineFieldAccess.setEnabled(false);
+                    btnNoInlineFieldAccess.setText("Turn off in-lining of generated field accessors.");
+                }
+                {
+                    btnNoGenerateTestMain = new Button(grpOthers, SWT.CHECK);
+                    btnNoGenerateTestMain.setText("Turn off automatically generated main method for JUnit tests");
+                }
+                {
+                    btnIgnoreMissingImports = new Button(grpOthers, SWT.CHECK);
+                    btnIgnoreMissingImports.setText("Continue translation if an imported class is not found on the class or source paths");
+                }
+                {
+                    btnPrintConvertedSources = new Button(grpOthers, SWT.CHECK);
+                    btnPrintConvertedSources.setText("Print input source files after initial conversion");
+                }
+                {
+                    btnTimingInfo = new Button(grpOthers, SWT.CHECK);
+                    btnTimingInfo.setText("Print time spent in translation steps");
+                }
+                {
+                    btnGenerateDeprecated = new Button(grpOthers, SWT.CHECK);
+                    btnGenerateDeprecated.setText("Generate deprecated attributes for deprecated methods, classes and interfaces.");
+                }
+                {
+                    btnMemDebug = new Button(grpOthers, SWT.CHECK);
+                    btnMemDebug.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                        }
+                    });
+                    btnMemDebug.setText("Generate code to display memory allocation graphs");
+                }
+                {
+                    btnGenerateNativeStubs = new Button(grpOthers, SWT.CHECK);
+                    btnGenerateNativeStubs.setText("Generate method bodies for native methods that do not have OCNI native code");
+                }
+                {
+                    btnStripReflection = new Button(grpOthers, SWT.CHECK);
+                    btnStripReflection.setText("Do not generate metadata needed for Java reflection");
+                }
+                {
+                    btnGwtIncompatible = new Button(grpOthers, SWT.CHECK);
+                    btnGwtIncompatible
+                            .setText("Removes methods that are marked with a GwtIncompatible annotation, unless its value is known to be compatible");
+                }
+                {
+                    btnSegmentedHeaders = new Button(grpOthers, SWT.CHECK);
+                    btnSegmentedHeaders.setText("Generates headers with guards around each declared type. Useful for breaking import cycles.");
+                }
             }
             {
-                btnNoGenerateTestMain = new Button(grpOthers, SWT.CHECK);
-                btnNoGenerateTestMain.setText("Turn off automatically generated main method for JUnit tests");
-            }
-            {
-                btnIgnoreMissingImports = new Button(grpOthers, SWT.CHECK);
-                btnIgnoreMissingImports.setText("Continue translation if an imported class is not found on the class or source paths");
-            }
-            {
-                btnPrintConvertedSources = new Button(grpOthers, SWT.CHECK);
-                btnPrintConvertedSources.setText("Print input source files after initial conversion");
-            }
-            {
-                btnTimingInfo = new Button(grpOthers, SWT.CHECK);
-                btnTimingInfo.setText("Print time spent in translation steps");
-            }
-            {
-                btnMemDebug = new Button(grpOthers, SWT.CHECK);
-                btnMemDebug.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
+                tbtmProguard = new TabItem(tabFolder, SWT.NONE);
+                tbtmProguard.setText("Advanced");
+                {
+                    composite = new Composite(tabFolder, SWT.NONE);
+                    tbtmProguard.setControl(composite);
+                    composite.setLayout(new GridLayout(3, false));
+                    {
+                        lblProguardDeadCode = new Label(composite, SWT.NONE);
+                        lblProguardDeadCode.setText("ProGuard Dead Code");
                     }
-                });
-                btnMemDebug.setText("Generate code to display memory allocation graphs");
-            }
-            {
-                btnGenerateNativeStubs = new Button(grpOthers, SWT.CHECK);
-                btnGenerateNativeStubs.setText("Generate method bodies for native methods that do not have OCNI native code");
-            }
-        }
-        {
-            grpProguardDeadCode = new Group(composite_2, SWT.NONE);
-            grpProguardDeadCode.setLayout(new GridLayout(3, false));
-            grpProguardDeadCode.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-            {
-                lblProguardDeadCode = new Label(grpProguardDeadCode, SWT.NONE);
-                lblProguardDeadCode.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-                lblProguardDeadCode.setText("ProGuard Dead Code");
-            }
-            {
-                txtProguardFile = new Text(grpProguardDeadCode, SWT.BORDER);
-                txtProguardFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-            }
-            {
-                btnBrowseProGuardFile = new Button(grpProguardDeadCode, SWT.NONE);
-                btnBrowseProGuardFile.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        browseProguardFile();
+                    {
+                        txtProguardFile = new Text(composite, SWT.BORDER);
+                        txtProguardFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
                     }
-                });
-                btnBrowseProGuardFile.setText("Browse");
-            }
-            {
-                lblMethodMappingFile = new Label(grpProguardDeadCode, SWT.NONE);
-                lblMethodMappingFile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-                lblMethodMappingFile.setText("Method Mapping File");
-            }
-            {
-                txtMethodMappingFile = new Text(grpProguardDeadCode, SWT.BORDER);
-                txtMethodMappingFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-            }
-            {
-                btnBrowseMethodMapping = new Button(grpProguardDeadCode, SWT.NONE);
-                btnBrowseMethodMapping.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        browseMethodMappingFile();
+                    {
+                        btnBrowseProGuardFile = new Button(composite, SWT.NONE);
+                        btnBrowseProGuardFile.addSelectionListener(new SelectionAdapter() {
+                            @Override
+                            public void widgetSelected(SelectionEvent e) {
+                                browseProguardFile();
+                            }
+                        });
+                        btnBrowseProGuardFile.setText("Browse");
                     }
-                });
-                btnBrowseMethodMapping.setText("Browse");
-            }
-            {
-                lblBootclasspath = new Label(grpProguardDeadCode, SWT.NONE);
-                lblBootclasspath.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-                lblBootclasspath.setText("Bootclasspath");
-            }
-            {
-                txtBootpath = new Text(grpProguardDeadCode, SWT.BORDER);
-                txtBootpath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-            }
-            {
-                btnBootpathBrowse = new Button(grpProguardDeadCode, SWT.NONE);
-                btnBootpathBrowse.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        browseBootpath();
+                    {
+                        label = new Label(composite, SWT.NONE);
+                        label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+                        label.setText("Bootclasspath");
                     }
-                });
-                btnBootpathBrowse.setText("Browse");
+                    {
+                        txtMethodMappingFile = new Text(composite, SWT.BORDER);
+                        txtMethodMappingFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                    }
+                    {
+                        btnBrowseMethodMapping = new Button(composite, SWT.NONE);
+                        btnBrowseMethodMapping.addSelectionListener(new SelectionAdapter() {
+                            @Override
+                            public void widgetSelected(SelectionEvent e) {
+                                browseMethodMappingFile();
+                            }
+                        });
+                        btnBrowseMethodMapping.setText("Browse");
+                    }
+                    {
+                        label_1 = new Label(composite, SWT.NONE);
+                        label_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+                        label_1.setText("Method Mapping File");
+                    }
+                    {
+                        txtBootpath = new Text(composite, SWT.BORDER);
+                        txtBootpath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                    }
+                    {
+                        btnBootpathBrowse = new Button(composite, SWT.NONE);
+                        btnBootpathBrowse.addSelectionListener(new SelectionAdapter() {
+                            @Override
+                            public void widgetSelected(SelectionEvent e) {
+                                browseBootpath();
+                            }
+                        });
+                        btnBootpathBrowse.setText("Browse");
+                    }
+                }
             }
+
+            initialize();
+
+            return composite_2;
         }
 
-        // Load/Init
-        initialize();
-
-        return composite_2;
     }
 
     /**
@@ -372,7 +413,7 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Gets the project.
-     *
+     * 
      * @return the project
      */
     private IResource getProject() {
@@ -417,8 +458,9 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Update default prefs in ui.
-     *
-     * @param defaultPrefs the default prefs
+     * 
+     * @param defaultPrefs
+     *            the default prefs
      */
     private void updateDefaultPrefsInUI(Map<String, String> defaultPrefs) {
         btnGenerateDebugSupport.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT)));
@@ -434,7 +476,7 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnMakeErrorsToWarnings.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.ERROR_TO_WARNING)));
         btnQuiet.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.QUIET)));
         btnVerbose.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.VERBOSE)));
-        
+
         btnMemDebug.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.MEM_DEBUG)));
         btnGenerateNativeStubs.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS)));
 
@@ -443,17 +485,24 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnIgnoreMissingImports.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS)));
         btnPrintConvertedSources.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES)));
         btnTimingInfo.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.TIMING_INFO)));
+
+        /* 0.8.7 changes */
+        btnBuildClosure.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.BUILD_CLOSURE)));
+        btnGenerateDeprecated.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_DEPRECATED)));
+        btnStripReflection.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.STRIP_REFLECTION)));
+        btnGwtIncompatible.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.STRIP_GWT_INCOMPATIBLE)));
+        btnSegmentedHeaders.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.SEGMENTED_HEADERS)));
     }
 
     /**
      * Construct pref map.
-     *
+     * 
      * @return the map
      */
     private Map<String, String> constructPrefMap() {
         Map<String, String> prefMap = new HashMap<String, String>();
-        
-        //indicate that this project has its properties set
+
+        // indicate that this project has its properties set
         prefMap.put(PreferenceConstants.INITIALIZE_FIRST_TIME, Boolean.TRUE.toString());
 
         prefMap.put(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT, Boolean.toString(btnGenerateDebugSupport.getSelection()));
@@ -476,23 +525,32 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.toString(btnIgnoreMissingImports.getSelection()));
         prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.toString(btnPrintConvertedSources.getSelection()));
         prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.toString(btnTimingInfo.getSelection()));
-        
-        //new optios added from j2objc 0.6
+
+        // new optios added from j2objc 0.6
         prefMap.put(PreferenceConstants.MEM_DEBUG, Boolean.toString(btnMemDebug.getSelection()));
         prefMap.put(PreferenceConstants.GENERATE_NATIVE_STUBS, Boolean.toString(btnGenerateNativeStubs.getSelection()));
-        //end new options
+        // end new options
 
         prefMap.put(PreferenceConstants.DEAD_CODE_REPORT, txtProguardFile.getText());
         prefMap.put(PreferenceConstants.METHOD_MAPPING_FILE, txtMethodMappingFile.getText());
         prefMap.put(PreferenceConstants.BOOTCLASSPATH, txtBootpath.getText());
+
+        /* 0.8.7 */
+        prefMap.put(PreferenceConstants.BUILD_CLOSURE, Boolean.toString(btnBuildClosure.getSelection()));
+        prefMap.put(PreferenceConstants.GENERATE_DEPRECATED, Boolean.toString(btnGenerateDeprecated.getSelection()));
+        prefMap.put(PreferenceConstants.STRIP_REFLECTION, Boolean.toString(btnStripReflection.getSelection()));
+        prefMap.put(PreferenceConstants.STRIP_GWT_INCOMPATIBLE, Boolean.toString(btnGwtIncompatible.getSelection()));
+        prefMap.put(PreferenceConstants.SEGMENTED_HEADERS, Boolean.toString(btnSegmentedHeaders.getSelection()));
+        
 
         return prefMap;
     }
 
     /**
      * Populate properties.
-     *
-     * @throws CoreException the core exception
+     * 
+     * @throws CoreException
+     *             the core exception
      */
     private void populateProperties() throws CoreException {
         Map<String, String> prefs = PropertiesUtil.getProjectProperties(getProject());
@@ -516,12 +574,18 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnIgnoreMissingImports.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS)));
         btnPrintConvertedSources.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES)));
         btnTimingInfo.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.TIMING_INFO)));
-        
+
         btnMemDebug.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.MEM_DEBUG)));
         btnGenerateNativeStubs.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS)));
-        
+
         txtProguardFile.setText(prefs.get(PreferenceConstants.DEAD_CODE_REPORT));
         txtMethodMappingFile.setText(prefs.get(PreferenceConstants.METHOD_MAPPING_FILE));
         txtBootpath.setText(prefs.get(PreferenceConstants.BOOTCLASSPATH));
+
+        btnBuildClosure.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.BUILD_CLOSURE)));
+        btnGenerateDeprecated.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.GENERATE_DEPRECATED)));
+        btnStripReflection.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.STRIP_REFLECTION)));
+        btnGwtIncompatible.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.STRIP_GWT_INCOMPATIBLE)));
+        btnSegmentedHeaders.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.SEGMENTED_HEADERS)));
     }
 }

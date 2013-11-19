@@ -153,7 +153,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      */
     public ClasspathPropertyPage() {
         setDescription("The selected classpath entires are used at the time of compiling.");
-        setMessage("J2OBJC Preferences");
+        setMessage("Classpath Preferences");
     }
 
     /*

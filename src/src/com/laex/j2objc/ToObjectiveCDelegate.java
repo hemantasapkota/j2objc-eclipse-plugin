@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
@@ -25,7 +27,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 import com.laex.j2objc.preferences.PreferenceConstants;
@@ -38,6 +39,8 @@ import com.laex.j2objc.util.PropertiesUtil;
  */
 public class ToObjectiveCDelegate implements IResourceVisitor {
 
+    private static String prebuiltSwitch;
+
     /** The prefs. */
     private Map<String, String> prefs;
 
@@ -49,10 +52,13 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Instantiates a new to objective c delegate.
-     *
-     * @param display the display
-     * @param prefs the prefs
-     * @param monitor the monitor
+     * 
+     * @param display
+     *            the display
+     * @param prefs
+     *            the prefs
+     * @param monitor
+     *            the monitor
      */
     public ToObjectiveCDelegate(Display display, Map<String, String> prefs, IProgressMonitor monitor) {
         this.display = display;
@@ -62,16 +68,23 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Builds the command.
-     *
-     * @param prefs the prefs
-     * @param project the project
-     * @param sourcePath the source path
-     * @param outputPath the output path
+     * 
+     * @param prefs
+     *            the prefs
+     * @param project
+     *            the project
+     * @param sourcePath
+     *            the source path
+     * @param outputPath
+     *            the output path
      * @return the string
-     * @throws CoreException the core exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws CoreException
+     *             the core exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
-    private String buildCommand(Map<String, String> prefs, IProject project, String sourcePath, String outputPath) throws CoreException, IOException {
+    private String buildCommand(Display display, Map<String, String> prefs, IProject project, IResource resource, String sourcePath, String outputPath)
+            throws CoreException, IOException {
         StringBuilder sb = new StringBuilder();
 
         // Create platform indenpendent path and append the path to the compiler
@@ -87,6 +100,31 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
             sb.append(" ");
         }
+
+        if (StringUtils.isEmpty(prebuiltSwitch)) {
+            prebuildSwitches(display, prefs, project);
+        }
+
+        sb.append(prebuiltSwitch);
+
+        if (resource instanceof IFile) {
+            String charset = ((IFile) resource).getCharset();
+            sb.append(PreferenceConstants.ENCODING).append(" ").append(charset).append(" ");
+        }
+
+        sb.append(PreferenceConstants.OUTPUT_DIR).append(" ").append(outputPath).append(" ");
+
+        sb.append(sourcePath);
+
+        return sb.toString();
+    }
+
+    public static void clearPrebuiltSwitch() {
+        prebuiltSwitch = null;
+    }
+
+    public static void prebuildSwitches(Display display, Map<String, String> prefs, IProject project) throws IOException {
+        StringBuilder sb = new StringBuilder();
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT, prefs))
             sb.append(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT).append(" ");
@@ -118,8 +156,9 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         if (PropertiesUtil.hasProperty(PreferenceConstants.VERBOSE, prefs))
             sb.append(PreferenceConstants.VERBOSE).append(" ");
 
-        if (PropertiesUtil.hasProperty(PreferenceConstants.NO_INLINE_FIELD_ACCESS, prefs))
-            sb.append(PreferenceConstants.NO_INLINE_FIELD_ACCESS).append(" ");
+        /* Ignore INLINE FIELD ACCESS. This property is no longer present in 0.8.7 */
+//        if (PropertiesUtil.hasProperty(PreferenceConstants.NO_INLINE_FIELD_ACCESS, prefs))
+//            sb.append(PreferenceConstants.NO_INLINE_FIELD_ACCESS).append(" ");
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.NO_GENERATE_TEST_MAIN, prefs))
             sb.append(PreferenceConstants.NO_GENERATE_TEST_MAIN).append(" ");
@@ -139,8 +178,21 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         if (PropertiesUtil.hasProperty(PreferenceConstants.TIMING_INFO, prefs))
             sb.append(PreferenceConstants.TIMING_INFO).append(" ");
 
-        if (PropertiesUtil.doesExistPrefixPropertiesFile(project))
-            sb.append(PreferenceConstants.PREFIXES).append(" ").append(PropertiesUtil.getPrefixPropertiesFile(project)).append(" ");
+        /* 0.8.7 changes */
+        if (PropertiesUtil.hasProperty(PreferenceConstants.BUILD_CLOSURE, prefs))
+            sb.append(PreferenceConstants.BUILD_CLOSURE).append(" ");
+
+        if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_DEPRECATED, prefs))
+            sb.append(PreferenceConstants.GENERATE_DEPRECATED).append(" ");
+
+        if (PropertiesUtil.hasProperty(PreferenceConstants.STRIP_REFLECTION, prefs))
+            sb.append(PreferenceConstants.STRIP_REFLECTION).append(" ");
+
+        if (PropertiesUtil.hasProperty(PreferenceConstants.STRIP_GWT_INCOMPATIBLE, prefs))
+            sb.append(PreferenceConstants.STRIP_GWT_INCOMPATIBLE).append(" ");
+
+        if (PropertiesUtil.hasProperty(PreferenceConstants.SEGMENTED_HEADERS, prefs))
+            sb.append(PreferenceConstants.SEGMENTED_HEADERS).append(" ");
 
         if (PropertiesUtil.hasTextProperty(PreferenceConstants.DEAD_CODE_REPORT, prefs))
             sb.append(PreferenceConstants.DEAD_CODE_REPORT).append(" ").append(prefs.get(PreferenceConstants.DEAD_CODE_REPORT)).append(" ");
@@ -151,11 +203,14 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         if (PropertiesUtil.hasTextProperty(PreferenceConstants.BOOTCLASSPATH, prefs))
             sb.append(PreferenceConstants.BOOTCLASSPATH).append(":").append(prefs.get(PreferenceConstants.BOOTCLASSPATH)).append(" ");
 
-        sb.append(PreferenceConstants.OUTPUT_DIR).append(" ").append(outputPath).append(" ");
+        if (PropertiesUtil.doesExistPrefixPropertiesFile(project))
+            sb.append(PreferenceConstants.PREFIXES).append(" ").append(PropertiesUtil.getPrefixPropertiesFile(project)).append(" ");
 
-        sb.append(sourcePath);
+        prebuiltSwitch = sb.toString();
 
-        return sb.toString();
+        MessageConsoleStream mct = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE).newMessageStream();
+        MessageUtil.setConsoleColor(display, mct, SWT.COLOR_BLUE);
+        mct.write(String.format("Executing with switches: [ %s ]%s", prebuiltSwitch, MessageUtil.NEW_LINE_CONSTANT));
     }
 
     /*
@@ -170,8 +225,8 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         // cancel the job
         if (monitor.isCanceled()) {
             onCancelled();
-            monitor.done();
             resource.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+            monitor.done();
             return false;
         }
 
@@ -191,7 +246,7 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         String outputPath = resource.getProject().getFolder("src").getLocation().makeAbsolute().toOSString();
 
         try {
-            String cmd = buildCommand(prefs, resource.getProject(), sourcePath, outputPath);
+            String cmd = buildCommand(this.display, prefs, resource.getProject(), resource, sourcePath, outputPath);
 
             monitor.subTask(resource.getName());
 
@@ -200,25 +255,24 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
             Scanner scanInput = new Scanner(p.getInputStream());
             Scanner scanErr = new Scanner(p.getErrorStream());
 
-            MessageConsole mc = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
-            final MessageConsoleStream mst = mc.newMessageStream();
+            MessageConsoleStream mct = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE).newMessageStream();
 
-            mst.write(cmd);
-            mst.write(MessageUtil.NEW_LINE_CONSTANT);
+            mct.write(cmd);
+            mct.write(MessageUtil.NEW_LINE_CONSTANT);
 
             while (scanInput.hasNext()) {
-                MessageUtil.resetConsoleColor(display, mst);
-                mst.write(scanInput.nextLine());
-                mst.write(MessageUtil.NEW_LINE_CONSTANT);
+                MessageUtil.resetConsoleColor(display, mct);
+                mct.write(scanInput.nextLine());
+                mct.write(MessageUtil.NEW_LINE_CONSTANT);
             }
 
             while (scanErr.hasNext()) {
-                MessageUtil.setConsoleColor(display, mst, SWT.COLOR_RED);
-                mst.write(scanErr.nextLine());
-                mst.write(MessageUtil.NEW_LINE_CONSTANT);
+                MessageUtil.setConsoleColor(display, mct, SWT.COLOR_RED);
+                mct.write(scanErr.nextLine());
+                mct.write(MessageUtil.NEW_LINE_CONSTANT);
             }
 
-            mst.write(MessageUtil.NEW_LINE_CONSTANT);
+            mct.write(MessageUtil.NEW_LINE_CONSTANT);
 
         } catch (IOException e) {
             LogUtil.logException(e);
@@ -230,10 +284,8 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
     }
 
     private void onCancelled() {
-        MessageConsole mc = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE);
-        MessageConsoleStream mct = mc.newMessageStream();
+        MessageConsoleStream mct = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE).newMessageStream();
         MessageUtil.setConsoleColor(display, mct, SWT.COLOR_RED);
-
         try {
             mct.write("J2OBJC compilation cancelled!!");
         } catch (IOException e) {

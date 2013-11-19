@@ -46,6 +46,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -197,7 +198,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
         Composite composite = new Composite(container, SWT.NONE);
         composite.setLayout(new RowLayout(SWT.VERTICAL));
-        composite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false, 1, 1));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 
         btnEdit = new Button(composite, SWT.NONE);
         btnEdit.setLayoutData(new RowData(76, SWT.DEFAULT));
@@ -230,6 +231,18 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         });
         btnResetAll.setText("Reset All");
 
+        Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        label.setLayoutData(new RowData(79, 2));
+
+        Button btnSetAllBlank = new Button(composite, SWT.NONE);
+        btnSetAllBlank.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                blankAll();
+            }
+        });
+        btnSetAllBlank.setText("Set Blank");
+
         try {
             loadProperties();
             loadPackages();
@@ -243,8 +256,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * On selection changed.
-     *
-     * @param event the event
+     * 
+     * @param event
+     *            the event
      */
     protected void onSelectionChanged(SelectionChangedEvent event) {
         if (event.getSelection().isEmpty()) {
@@ -263,9 +277,19 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         int resp = MessageUtil.messageRemoveItems(getShell());
 
         if (resp == SWT.OK) {
-            Set<Object> keys = pkgPrefix.keySet();
-            for (Object key : keys) {
-                pkgPrefix.put(key, "");
+            for (String s : pkgList) {
+                pkgPrefix.remove(s);
+            }
+            tableViewer.refresh();
+        }
+    }
+
+    protected void blankAll() {
+        int resp = MessageUtil.messageSetAllPrefixBlank(getShell());
+
+        if (resp == SWT.OK) {
+            for (String key : pkgList) {
+                pkgPrefix.put(key, " ");
             }
             tableViewer.refresh();
         }
@@ -273,7 +297,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the selected package.
-     *
+     * 
      * @return the selected package
      */
     private String getSelectedPackage() {
@@ -286,7 +310,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
      */
     protected void resetSelection() {
         String selectedPackage = getSelectedPackage();
-        pkgPrefix.put(selectedPackage, "");
+        pkgPrefix.remove(selectedPackage);
         tableViewer.refresh();
     }
 
@@ -296,7 +320,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
     protected void editPrefix() {
         String selectedPkg = getSelectedPackage();
         String p = pkgPrefix.getProperty(selectedPkg);
-        
+
         if (p == null)
             p = "";
 
@@ -311,8 +335,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Load packages.
-     *
-     * @throws CoreException the core exception
+     * 
+     * @throws CoreException
+     *             the core exception
      */
     private void loadPackages() throws CoreException {
         IJavaProject proj = (IJavaProject) getElement();
@@ -397,8 +422,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the properties file name.
-     *
-     * @param javaProject the java project
+     * 
+     * @param javaProject
+     *            the java project
      * @return the properties file name
      */
     private String getPropertiesFileName(IJavaProject javaProject) {
