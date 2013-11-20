@@ -7,9 +7,7 @@ Installation
 =====================
 You can install the plugin via the update sites:
 
-Eclipse Kepler - http://j2objc-updatesite.hsapkota.com.au/4.3/
-
-Eclipse Juno - http://j2objc-updatesite.hsapkota.com.au/4.2/
+Eclipse Juno/Kepler - http://j2objc-updatesite.hsapkota.com.au/4.3/
 
 Eclipse Indigo - http://j2objc-updatesite.hsapkota.com.au/3.7/
 
