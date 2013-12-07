@@ -16,3 +16,8 @@ Usage
 See here on more details on how to install and use the plugin.
 
 http://hsapkota.com.au/index.php/projects/20-j2objc-eclipse-plugin-howto
+
+Donate (1JzDsSmN8P498HBVUiDzKAjM5UsipT4FjN)
+===========================================
+If you think this plugin has helped you in any way, dontate some bitcoins to the following adrress:
+1JzDsSmN8P498HBVUiDzKAjM5UsipT4FjN
