@@ -21,3 +21,7 @@ Donate
 ===========================================
 If you think this plugin has helped you in any way, dontate some bitcoins to the following adrress:
 1JzDsSmN8P498HBVUiDzKAjM5UsipT4FjN
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hemantasapkota/j2objc-eclipse-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
