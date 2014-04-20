@@ -7,9 +7,9 @@ Installation
 =====================
 You can install the plugin via the update sites:
 
-Eclipse Juno/Kepler - http://j2objc-updatesite.hsapkota.com.au/4.3/
+Eclipse Juno/Kepler - https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/update_site
 
-Eclipse Indigo - http://j2objc-updatesite.hsapkota.com.au/3.7/
+Eclipse Indigo - https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/3.7/update_site
 
 Usage
 =====================
