@@ -15,7 +15,7 @@ Usage
 =====================
 See here on more details on how to install and use the plugin.
 
-http://hsapkota.com.au/index.php/projects/20-j2objc-eclipse-plugin-howto
+http://hemantasapkota.github.io/posts/j2objc-eclipse-plugin/
 
 Donate
 ===========================================
