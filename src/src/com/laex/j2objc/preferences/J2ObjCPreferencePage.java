@@ -14,6 +14,8 @@ import j2objc_eclipse_plugin.Activator;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -41,7 +43,21 @@ public class J2ObjCPreferencePage extends FieldEditorPreferencePage implements I
      * ()
      */
     public void createFieldEditors() {
-        addField(new DirectoryFieldEditor(PreferenceConstants.PATH_TO_COMPILER, "&Path to Compiler", getFieldEditorParent()));
+        final DirectoryFieldEditor df = new DirectoryFieldEditor(PreferenceConstants.PATH_TO_COMPILER, "&Path to Compiler", getFieldEditorParent());
+        df.getTextControl(getFieldEditorParent()).addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                String str = df.getStringValue().trim();
+                if (str.contains(" ")) {
+                  setMessage("Path to compiler invalid. Contains spaces", ERROR);
+                  setValid(false);
+                } else {
+                    setMessage(null);
+                    setValid(true);
+                }
+            }
+        });
+        addField(df);
     }
 
     /*

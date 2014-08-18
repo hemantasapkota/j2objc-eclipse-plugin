@@ -91,7 +91,6 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
             for (Object key : classpathProps.keySet()) {
                 sb.append(key).append(":");
             }
-
             sb.append(" ");
         }
 
@@ -107,7 +106,6 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         }
 
         sb.append(PreferenceConstants.OUTPUT_DIR).append(" ").append(outputPath).append(" ");
-
         sb.append(sourcePath);
 
         return sb.toString();
