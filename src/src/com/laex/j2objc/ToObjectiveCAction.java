@@ -56,6 +56,7 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
     /** The struc selc. */
     IStructuredSelection strucSelc = null;
 
+    /** The total work. */
     private int totalWork = 0;
 
     /**
@@ -197,6 +198,9 @@ public class ToObjectiveCAction implements IObjectActionDelegate {
         this.targetPart = targetPart;
     }
 
+    /**
+     * Calculate work.
+     */
     private void calculateWork() {
         IJavaElement elm = (IJavaElement) strucSelc.getFirstElement();
 

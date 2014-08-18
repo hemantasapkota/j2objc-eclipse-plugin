@@ -13,8 +13,10 @@ package com.laex.j2objc.preferences;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +38,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.laex.j2objc.util.LogUtil;
+import com.laex.j2objc.util.ProjectUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
 /**
@@ -120,16 +123,35 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The btn generate native stubs. */
     private Button btnGenerateNativeStubs;
+    
+    /** The tbtm new item. */
     private TabItem tbtmNewItem;
+    
+    /** The tbtm proguard. */
     private TabItem tbtmProguard;
+    
+    /** The composite. */
     private Composite composite;
+    
+    /** The btn build closure. */
     private Button btnBuildClosure;
+    
+    /** The btn generate deprecated. */
     private Button btnGenerateDeprecated;
+    
+    /** The btn strip reflection. */
     private Button btnStripReflection;
+    
+    /** The btn gwt incompatible. */
     private Button btnGwtIncompatible;
+    
+    /** The label. */
     private Label label;
+    
+    /** The label_1. */
     private Label label_1;
 
+    /** The btn segmented headers. */
     private Button btnSegmentedHeaders;
 
     /**
@@ -413,11 +435,11 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Gets the project.
-     * 
+     *
      * @return the project
      */
     private IResource getProject() {
-        return ((IJavaElement) getElement()).getResource();
+        return ProjectUtil.getProject(getElement());
     }
 
     /*
@@ -444,11 +466,12 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
      * @see org.eclipse.jface.preference.PreferencePage#performOk()
      */
     public boolean performOk() {
-        IJavaElement res = (IJavaElement) getElement();
+//        IJavaElement res = (IJavaElement) getElement();
+        IResource res = ProjectUtil.getProject(getElement());
         Map<String, String> prefMap = constructPrefMap();
 
         try {
-            PropertiesUtil.persistProperties(res.getResource(), prefMap);
+            PropertiesUtil.persistProperties(res, prefMap);
         } catch (CoreException e) {
             return false;
         }
@@ -458,9 +481,8 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Update default prefs in ui.
-     * 
-     * @param defaultPrefs
-     *            the default prefs
+     *
+     * @param defaultPrefs the default prefs
      */
     private void updateDefaultPrefsInUI(Map<String, String> defaultPrefs) {
         btnGenerateDebugSupport.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_DEBUGGING_SUPPORT)));
@@ -496,7 +518,7 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Construct pref map.
-     * 
+     *
      * @return the map
      */
     private Map<String, String> constructPrefMap() {
@@ -548,9 +570,8 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /**
      * Populate properties.
-     * 
-     * @throws CoreException
-     *             the core exception
+     *
+     * @throws CoreException the core exception
      */
     private void populateProperties() throws CoreException {
         Map<String, String> prefs = PropertiesUtil.getProjectProperties(getProject());

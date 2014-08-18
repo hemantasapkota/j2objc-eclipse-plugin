@@ -53,6 +53,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.laex.j2objc.util.LogUtil;
 import com.laex.j2objc.util.MessageUtil;
+import com.laex.j2objc.util.ProjectUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
 /**
@@ -256,9 +257,8 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * On selection changed.
-     * 
-     * @param event
-     *            the event
+     *
+     * @param event the event
      */
     protected void onSelectionChanged(SelectionChangedEvent event) {
         if (event.getSelection().isEmpty()) {
@@ -284,6 +284,9 @@ public class PackagePrefixPropertyPage extends PropertyPage {
         }
     }
 
+    /**
+     * Blank all.
+     */
     protected void blankAll() {
         int resp = MessageUtil.messageSetAllPrefixBlank(getShell());
 
@@ -297,7 +300,7 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the selected package.
-     * 
+     *
      * @return the selected package
      */
     private String getSelectedPackage() {
@@ -335,16 +338,12 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Load packages.
-     * 
-     * @throws CoreException
-     *             the core exception
+     *
+     * @throws CoreException the core exception
      */
     private void loadPackages() throws CoreException {
-        IJavaProject proj = (IJavaProject) getElement();
-
         pkgList = new HashSet<String>();
-
-        proj.getResource().accept(new IResourceVisitor() {
+        ProjectUtil.getJavaProject(getElement()).getResource().accept(new IResourceVisitor() {
             @Override
             public boolean visit(IResource resource) throws CoreException {
                 if (JavaCore.isJavaLikeFileName(resource.getName())) {
@@ -366,9 +365,11 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Load properties.
+     *
+     * @throws CoreException the core exception
      */
-    private void loadProperties() {
-        IJavaProject javaProject = (IJavaProject) getElement();
+    private void loadProperties() throws CoreException {
+        IJavaProject javaProject = ProjectUtil.getJavaProject(getElement());
 
         String propertiesFilePath = PropertiesUtil.constructPrefixPropertiesFilePath(javaProject.getProject());
         IFile propertiesFile = javaProject.getProject().getFile(propertiesFilePath);
@@ -422,9 +423,8 @@ public class PackagePrefixPropertyPage extends PropertyPage {
 
     /**
      * Gets the properties file name.
-     * 
-     * @param javaProject
-     *            the java project
+     *
+     * @param javaProject the java project
      * @return the properties file name
      */
     private String getPropertiesFileName(IJavaProject javaProject) {

@@ -39,6 +39,7 @@ import com.laex.j2objc.util.PropertiesUtil;
  */
 public class ToObjectiveCDelegate implements IResourceVisitor {
 
+    /** The prebuilt switch. */
     private static String prebuiltSwitch;
 
     /** The prefs. */
@@ -52,13 +53,10 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Instantiates a new to objective c delegate.
-     * 
-     * @param display
-     *            the display
-     * @param prefs
-     *            the prefs
-     * @param monitor
-     *            the monitor
+     *
+     * @param display the display
+     * @param prefs the prefs
+     * @param monitor the monitor
      */
     public ToObjectiveCDelegate(Display display, Map<String, String> prefs, IProgressMonitor monitor) {
         this.display = display;
@@ -68,20 +66,16 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
 
     /**
      * Builds the command.
-     * 
-     * @param prefs
-     *            the prefs
-     * @param project
-     *            the project
-     * @param sourcePath
-     *            the source path
-     * @param outputPath
-     *            the output path
+     *
+     * @param display the display
+     * @param prefs the prefs
+     * @param project the project
+     * @param resource the resource
+     * @param sourcePath the source path
+     * @param outputPath the output path
      * @return the string
-     * @throws CoreException
-     *             the core exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private String buildCommand(Display display, Map<String, String> prefs, IProject project, IResource resource, String sourcePath, String outputPath)
             throws CoreException, IOException {
@@ -119,10 +113,21 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         return sb.toString();
     }
 
+    /**
+     * Clear prebuilt switch.
+     */
     public static void clearPrebuiltSwitch() {
         prebuiltSwitch = null;
     }
 
+    /**
+     * Prebuild switches.
+     *
+     * @param display the display
+     * @param prefs the prefs
+     * @param project the project
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public static void prebuildSwitches(Display display, Map<String, String> prefs, IProject project) throws IOException {
         StringBuilder sb = new StringBuilder();
 
@@ -283,6 +288,9 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         return true;
     }
 
+    /**
+     * On cancelled.
+     */
     private void onCancelled() {
         MessageConsoleStream mct = MessageUtil.findConsole(MessageUtil.J2OBJC_CONSOLE).newMessageStream();
         MessageUtil.setConsoleColor(display, mct, SWT.COLOR_RED);

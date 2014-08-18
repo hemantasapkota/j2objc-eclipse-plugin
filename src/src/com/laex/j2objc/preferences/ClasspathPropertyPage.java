@@ -51,6 +51,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.internal.SharedImages;
 
 import com.laex.j2objc.util.LogUtil;
+import com.laex.j2objc.util.ProjectUtil;
 import com.laex.j2objc.util.PropertiesUtil;
 
 /**
@@ -67,6 +68,7 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
     /** The checkbox table viewer. */
     private CheckboxTableViewer checkboxTableViewer;
 
+    /** The btn use all classpath libraries. */
     private Button btnUseAllClasspathLibraries;
 
     /**
@@ -217,9 +219,8 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      * Load project referenced classpaths.
      */
     private void loadProjectReferencedClasspaths() {
-        IJavaElement elm = (IJavaElement) getElement();
         try {
-            IClasspathEntry[] refClasspath = elm.getJavaProject().getResolvedClasspath(true);
+            IClasspathEntry[] refClasspath = ProjectUtil.getJavaProject(getElement()).getResolvedClasspath(true);
             for (IClasspathEntry o : refClasspath) {
 
                 IClasspathEntry entry = JavaCore.getResolvedClasspathEntry((IClasspathEntry) o);
@@ -299,6 +300,8 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
 
         } catch (JavaModelException e) {
             LogUtil.logException(e);
+        } catch (CoreException e) {
+            LogUtil.logException(e);
         }
     }
 
@@ -309,24 +312,18 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
      */
     @Override
     public boolean performOk() {
-        IJavaElement javaPrj = (IJavaElement) getElement();
-
-        PropertiesUtil.persistClasspathEntries(javaPrj.getJavaProject().getProject(), checkboxTableViewer.getCheckedElements());
-
+        PropertiesUtil.persistClasspathEntries(ProjectUtil.getProject(getElement()), checkboxTableViewer.getCheckedElements());
         return super.performOk();
     }
 
     /**
      * Load user selected classpaths.
-     * 
-     * @throws CoreException
-     *             the core exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     *
+     * @throws CoreException the core exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void loadUserSelectedClasspaths() throws CoreException, IOException {
-        IJavaElement javaPrj = (IJavaElement) getElement();
-        Properties props = PropertiesUtil.getClasspathEntries(javaPrj.getJavaProject().getProject());
+        Properties props = PropertiesUtil.getClasspathEntries(ProjectUtil.getProject(getElement()));
 
         for (Object s : props.keySet()) {
             if (classpathRef.contains(s)) {
@@ -337,6 +334,9 @@ public class ClasspathPropertyPage extends PropertyPage implements IWorkbenchPro
         btnUseAllClasspathLibraries.setSelection(checkboxTableViewer.getCheckedElements().length == classpathRef.size());
     }
 
+    /**
+     * Use all classpath libs.
+     */
     private void useAllClasspathLibs() {
         checkboxTableViewer.setAllChecked(btnUseAllClasspathLibraries.getSelection());
         checkboxTableViewer.refresh();

@@ -43,7 +43,6 @@ public class PackagePrefixEditDialog extends Dialog {
      * Instantiates a new package prefix edit dialog.
      *
      * @param parentShell the parent shell
-     * @wbp.parser.constructor
      */
     public PackagePrefixEditDialog(Shell parentShell) {
         super(parentShell);
@@ -54,6 +53,7 @@ public class PackagePrefixEditDialog extends Dialog {
      *
      * @param parentShell the parent shell
      * @param pkg the pkg
+     * @param prefix the prefix
      */
     public PackagePrefixEditDialog(Shell parentShell, String pkg, String prefix) {
         super(parentShell);

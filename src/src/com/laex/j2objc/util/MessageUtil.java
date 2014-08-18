@@ -44,6 +44,12 @@ public final class MessageUtil {
         return mb.open();
     }
 
+    /**
+     * Message set all prefix blank.
+     *
+     * @param shell the shell
+     * @return the int
+     */
     public static int messageSetAllPrefixBlank(Shell shell) {
         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.CANCEL);
         mb.setText("Confirmation");

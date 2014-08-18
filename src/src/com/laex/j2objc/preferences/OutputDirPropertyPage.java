@@ -10,6 +10,7 @@
  */
 package com.laex.j2objc.preferences;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.swt.SWT;
@@ -27,16 +28,22 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.laex.j2objc.util.LogUtil;
+import com.laex.j2objc.util.ProjectUtil;
 import com.laex.j2objc.util.PropertiesUtil;
+
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Link;
 
 /**
  * The Class OutputDirPropertyPage.
  */
 public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
-    
-    
+
     /** The txt output directory. */
     private Text txtOutputDirectory;
+    
+    /** The txt exclude. */
+    private Text txtExclude;
 
     /**
      * Instantiates a new output dir property page.
@@ -46,8 +53,12 @@ public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPro
         setMessage("Output Directory for Generated Sources");
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
+     * .swt.widgets.Composite)
      */
     @Override
     protected Control createContents(Composite parent) {
@@ -69,14 +80,32 @@ public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPro
             }
         });
         btnBrowse.setText("Browse");
-        
-        
+
+        Label label = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+        GridData gd_label = new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1);
+        gd_label.widthHint = 53;
+        label.setLayoutData(gd_label);
+
+        Link lblExclude = new Link(container, SWT.NONE);
+        lblExclude.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
+        lblExclude.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+        lblExclude.setText("Exclude (Space seperated). Ex: bin/* jni/*.h");
+
+        txtExclude = new Text(container, SWT.BORDER);
+        txtExclude.setText("jni/*.h");
+        GridData gd_txtExclude = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
+        gd_txtExclude.widthHint = 111;
+        txtExclude.setLayoutData(gd_txtExclude);
+
+        Label label_1 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+        label_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
+
         try {
             loadProperty();
         } catch (CoreException e1) {
             LogUtil.logException(e1);
         }
-        
+
         return container;
     }
 
@@ -91,15 +120,19 @@ public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPro
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     @Override
     protected void performDefaults() {
         txtOutputDirectory.setText("");
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performApply()
      */
     @Override
@@ -107,15 +140,17 @@ public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPro
         performOk();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.preference.PreferencePage#performOk()
      */
     @Override
     public boolean performOk() {
-        IJavaProject prj = (IJavaProject) getElement();
-
         try {
-            prj.getResource().setPersistentProperty(PropertiesUtil.OUTPUT_DIRECTORY_KEY, txtOutputDirectory.getText().trim());
+            IResource res = ProjectUtil.getJavaProject(getElement()).getResource();
+            res.setPersistentProperty(PropertiesUtil.OUTPUT_DIRECTORY_KEY, txtOutputDirectory.getText().trim());
+            res.setPersistentProperty(PropertiesUtil.EXCLUDE_FILES_KEY, txtExclude.getText().trim());
         } catch (CoreException e) {
             LogUtil.logException(e);
             return false;
@@ -130,10 +165,16 @@ public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPro
      * @throws CoreException the core exception
      */
     private void loadProperty() throws CoreException {
-        IJavaProject prj = (IJavaProject) getElement();
-        String outputDir = PropertiesUtil.getOutputDirectory(prj);
+        IJavaProject javaProject = ProjectUtil.getJavaProject(getElement());
+        String outputDir = PropertiesUtil.getOutputDirectory(javaProject);
+        String exclude = PropertiesUtil.getExcludePattern(javaProject);
+
         if (outputDir != null) {
             txtOutputDirectory.setText(outputDir);
+        }
+
+        if (exclude != null) {
+            txtExclude.setText(exclude);
         }
     }
 

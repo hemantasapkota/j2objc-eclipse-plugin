@@ -104,16 +104,22 @@ public class PreferenceConstants {
 
     /* Changes from 0.8.7 */
 
+    /** The Constant BUILD_CLOSURE. */
     public static final String BUILD_CLOSURE = "--build-closure";
 
+    /** The Constant ENCODING. */
     public static final String ENCODING = "-encoding";
 
+    /** The Constant GENERATE_DEPRECATED. */
     public static final String GENERATE_DEPRECATED = "--generate-deprecated";
 
+    /** The Constant STRIP_REFLECTION. */
     public static final String STRIP_REFLECTION = "--strip-reflection";
 
+    /** The Constant STRIP_GWT_INCOMPATIBLE. */
     public static final String STRIP_GWT_INCOMPATIBLE = "--strip-gwt-incompatible";
 
+    /** The Constant SEGMENTED_HEADERS. */
     public static final String SEGMENTED_HEADERS = "--segmented-headers";
 
     /* End changes from 0.8.7 */
