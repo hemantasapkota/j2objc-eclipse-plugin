@@ -7,9 +7,11 @@ Installation
 =====================
 You can install the plugin via the update sites:
 
-Eclipse Juno/Kepler - https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/update_site
+**Eclipse Juno/Kepler/Luna**
+https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/update_site
 
-Eclipse Indigo - https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/3.7/update_site
+**Eclipse Indigo (deprecated)**
+https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/3.7/update_site
 
 Usage
 =====================
@@ -22,6 +24,5 @@ Donate
 If you think this plugin has helped you in any way, dontate some bitcoins to the following adrress:
 15S1a3QJYUPPEQQ9NjzA1dnrAB78Vk2Hpr
 
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hemantasapkota/j2objc-eclipse-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+Follow me on twitter: [@hemantasapkota](https://twitter.com/laex_pearl) and don't forget to star this project.
 
