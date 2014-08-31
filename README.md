@@ -10,10 +10,12 @@ Installation
 You can install the plugin via the update sites:
 
 **Eclipse Juno/Kepler/Luna**
+
 https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/update_site
 
 **Eclipse Indigo (deprecated)**
-https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/3.7/update_site
+
+Please upgrade to newer releases.
 
 
 ![Install1](https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/screenshots/j2install1.png)
