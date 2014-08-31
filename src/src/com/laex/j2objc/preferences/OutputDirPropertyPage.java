@@ -89,16 +89,12 @@ public class OutputDirPropertyPage extends PropertyPage implements IWorkbenchPro
         Link lblExclude = new Link(container, SWT.NONE);
         lblExclude.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
         lblExclude.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
-        lblExclude.setText("Exclude (Space seperated). Ex: bin/* jni/*.h");
+        lblExclude.setText("Exclude (Space seperated). Ex: jni/*.h");
 
         txtExclude = new Text(container, SWT.BORDER);
-        txtExclude.setText("jni/*.h");
         GridData gd_txtExclude = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
         gd_txtExclude.widthHint = 111;
         txtExclude.setLayoutData(gd_txtExclude);
-
-        Label label_1 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
-        label_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
 
         try {
             loadProperty();
