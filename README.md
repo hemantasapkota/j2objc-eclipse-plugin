@@ -5,7 +5,15 @@ Eclipse plugin source code for Google's J2OBJC - A Java to iOS Objective-C trans
 
 ![Title](https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/screenshots/j2title.png)
 
-Installation
+Installation - Eclipse Marketplace
+==================================
+Marketplace Link: https://marketplace.eclipse.org/content/j2objc-eclipse-plugin
+Or
+Search from within Eclipse.
+
+![MarketplaceInstall](https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/screenshots/EPMarketplace.png)
+
+Installation - Manual
 =====================
 You can install the plugin via the update sites:
 
