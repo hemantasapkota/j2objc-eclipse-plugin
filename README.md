@@ -11,7 +11,7 @@ Marketplace Link: https://marketplace.eclipse.org/content/j2objc-eclipse-plugin
 Or
 Search from within Eclipse.
 
-![MarketplaceInstall](https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/screenshots/EPMarketplace.png)
+![MarketplaceInstall](https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/screenshots/Emarketplace.png)
 
 Installation - Manual
 =====================
