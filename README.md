@@ -42,5 +42,5 @@ Donate
 If you think this plugin has helped you in any way, dontate some bitcoins to the following adrress:
 15S1a3QJYUPPEQQ9NjzA1dnrAB78Vk2Hpr
 
-Follow me on twitter: [@hemantasapkota](https://twitter.com/laex_pearl) and don't forget to star this project.
+Follow me on twitter: [@hemantasapkota](https://twitter.com/ozhemanta) and don't forget to star this project.
 
