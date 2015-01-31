@@ -135,20 +135,11 @@ public class PropertiesUtil {
         // Memory OPtions
         prefMap.put(PreferenceConstants.USE_REFERENCE_COUNTING, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.USE_ARC, Boolean.TRUE.toString());
-        prefMap.put(PreferenceConstants.USE_GC, Boolean.FALSE.toString());
 
         prefMap.put(PreferenceConstants.ERROR_TO_WARNING, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.QUIET, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.VERBOSE, Boolean.TRUE.toString());
-
-        prefMap.put(PreferenceConstants.NO_INLINE_FIELD_ACCESS, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.NO_GENERATE_TEST_MAIN, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.TRUE.toString());
-        prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.FALSE.toString());
-
-        prefMap.put(PreferenceConstants.MEM_DEBUG, Boolean.FALSE.toString());
-        prefMap.put(PreferenceConstants.GENERATE_NATIVE_STUBS, Boolean.FALSE.toString());
 
         /* changes from 0.8.7 */
 
@@ -157,6 +148,11 @@ public class PropertiesUtil {
         prefMap.put(PreferenceConstants.STRIP_REFLECTION, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.STRIP_GWT_INCOMPATIBLE, Boolean.FALSE.toString());
         prefMap.put(PreferenceConstants.SEGMENTED_HEADERS, Boolean.FALSE.toString());
+        
+        /* changes from 0.9.6 */
+        
+        prefMap.put(PreferenceConstants.DOC_COMMENTS, Boolean.TRUE.toString());
+        prefMap.put(PreferenceConstants.EXTRACT_UNSEQUENCED, Boolean.FALSE.toString());
 
         return prefMap;
 
@@ -184,22 +180,16 @@ public class PropertiesUtil {
         String xLangugaeObjectiveCPP = prj.getPersistentProperty(qkey(PreferenceConstants.X_LANGUAGE_OBJECTIVE_CPP));
 
         String useRefCounting = prj.getPersistentProperty(qkey(PreferenceConstants.USE_REFERENCE_COUNTING));
-        String useGC = prj.getPersistentProperty(qkey(PreferenceConstants.USE_GC));
         String useARC = prj.getPersistentProperty(qkey(PreferenceConstants.USE_ARC));
 
         String errorToWarning = prj.getPersistentProperty(qkey(PreferenceConstants.ERROR_TO_WARNING));
         String quiet = prj.getPersistentProperty(qkey(PreferenceConstants.QUIET));
         String verbose = prj.getPersistentProperty(qkey(PreferenceConstants.VERBOSE));
-
-        String noInlineFieldAccess = prj.getPersistentProperty(qkey(PreferenceConstants.NO_INLINE_FIELD_ACCESS));
-        String noGenTestMain = prj.getPersistentProperty(qkey(PreferenceConstants.NO_GENERATE_TEST_MAIN));
-        String ignoreMissingImports = prj.getPersistentProperty(qkey(PreferenceConstants.IGNORE_MISSING_IMPORTS));
-        String printConverterdSources = prj.getPersistentProperty(qkey(PreferenceConstants.PRINT_CONVERTED_SOURCES));
         String timingInfo = prj.getPersistentProperty(qkey(PreferenceConstants.TIMING_INFO));
 
-        String memDebug = prj.getPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG));
-        String generateNativeStubs = prj.getPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS));
+        String docComments = prj.getPersistentProperty(qkey(PreferenceConstants.DOC_COMMENTS));
         String defaultPropertiesSetInfo = prj.getPersistentProperty(qkey(PreferenceConstants.INITIALIZE_FIRST_TIME));
+        String extractUnsequenced = prj.getPersistentProperty(qkey(PreferenceConstants.EXTRACT_UNSEQUENCED));
 
         String deadCodeReportFile = prj.getPersistentProperty(qkey(PreferenceConstants.DEAD_CODE_REPORT));
         if (deadCodeReportFile == null)
@@ -227,15 +217,10 @@ public class PropertiesUtil {
         prefs.put(PreferenceConstants.X_LANGUAGE_OBJECTIVE_C, xLangugaeObjectiveC);
         prefs.put(PreferenceConstants.X_LANGUAGE_OBJECTIVE_CPP, xLangugaeObjectiveCPP);
         prefs.put(PreferenceConstants.USE_REFERENCE_COUNTING, useRefCounting);
-        prefs.put(PreferenceConstants.USE_GC, useGC);
         prefs.put(PreferenceConstants.USE_ARC, useARC);
         prefs.put(PreferenceConstants.ERROR_TO_WARNING, errorToWarning);
         prefs.put(PreferenceConstants.QUIET, quiet);
         prefs.put(PreferenceConstants.VERBOSE, verbose);
-        prefs.put(PreferenceConstants.NO_INLINE_FIELD_ACCESS, noInlineFieldAccess);
-        prefs.put(PreferenceConstants.NO_GENERATE_TEST_MAIN, noGenTestMain);
-        prefs.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, ignoreMissingImports);
-        prefs.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, printConverterdSources);
         prefs.put(PreferenceConstants.TIMING_INFO, timingInfo);
         prefs.put(PreferenceConstants.INITIALIZE_FIRST_TIME, defaultPropertiesSetInfo);
 
@@ -243,8 +228,8 @@ public class PropertiesUtil {
         prefs.put(PreferenceConstants.METHOD_MAPPING_FILE, methodMappingFile);
         prefs.put(PreferenceConstants.BOOTCLASSPATH, bootclasspath);
 
-        prefs.put(PreferenceConstants.MEM_DEBUG, memDebug);
-        prefs.put(PreferenceConstants.GENERATE_NATIVE_STUBS, generateNativeStubs);
+        prefs.put(PreferenceConstants.DOC_COMMENTS, docComments);
+        prefs.put(PreferenceConstants.EXTRACT_UNSEQUENCED, extractUnsequenced);
 
         prefs.put(PreferenceConstants.BUILD_CLOSURE, buildClosure);
         prefs.put(PreferenceConstants.GENERATE_DEPRECATED, generateDeprecated);
@@ -273,29 +258,17 @@ public class PropertiesUtil {
 
         // Mem
         prj.setPersistentProperty(qkey(PreferenceConstants.USE_REFERENCE_COUNTING), prefs.get(PreferenceConstants.USE_REFERENCE_COUNTING));
-        prj.setPersistentProperty(qkey(PreferenceConstants.USE_GC), prefs.get(PreferenceConstants.USE_GC));
         prj.setPersistentProperty(qkey(PreferenceConstants.USE_ARC), prefs.get(PreferenceConstants.USE_ARC));
 
         // Output
         prj.setPersistentProperty(qkey(PreferenceConstants.ERROR_TO_WARNING), prefs.get(PreferenceConstants.ERROR_TO_WARNING));
         prj.setPersistentProperty(qkey(PreferenceConstants.QUIET), prefs.get(PreferenceConstants.QUIET));
         prj.setPersistentProperty(qkey(PreferenceConstants.VERBOSE), prefs.get(PreferenceConstants.VERBOSE));
-
-        prj.setPersistentProperty(qkey(PreferenceConstants.NO_INLINE_FIELD_ACCESS), prefs.get(PreferenceConstants.NO_INLINE_FIELD_ACCESS));
-        prj.setPersistentProperty(qkey(PreferenceConstants.NO_GENERATE_TEST_MAIN), prefs.get(PreferenceConstants.NO_GENERATE_TEST_MAIN));
-        prj.setPersistentProperty(qkey(PreferenceConstants.IGNORE_MISSING_IMPORTS), prefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS));
-        prj.setPersistentProperty(qkey(PreferenceConstants.PRINT_CONVERTED_SOURCES), prefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES));
         prj.setPersistentProperty(qkey(PreferenceConstants.TIMING_INFO), prefs.get(PreferenceConstants.TIMING_INFO));
-
-        prj.setPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG), prefs.get(PreferenceConstants.MEM_DEBUG));
-        prj.setPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS), prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS));
 
         prj.setPersistentProperty(qkey(PreferenceConstants.DEAD_CODE_REPORT), prefs.get(PreferenceConstants.DEAD_CODE_REPORT));
         prj.setPersistentProperty(qkey(PreferenceConstants.METHOD_MAPPING_FILE), prefs.get(PreferenceConstants.METHOD_MAPPING_FILE));
         prj.setPersistentProperty(qkey(PreferenceConstants.BOOTCLASSPATH), prefs.get(PreferenceConstants.BOOTCLASSPATH));
-
-        prj.setPersistentProperty(qkey(PreferenceConstants.MEM_DEBUG), prefs.get(PreferenceConstants.MEM_DEBUG));
-        prj.setPersistentProperty(qkey(PreferenceConstants.GENERATE_NATIVE_STUBS), prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS));
 
         /* Changes from 0.8.7 */
         prj.setPersistentProperty(qkey(PreferenceConstants.BUILD_CLOSURE), prefs.get(PreferenceConstants.BUILD_CLOSURE));
@@ -303,6 +276,10 @@ public class PropertiesUtil {
         prj.setPersistentProperty(qkey(PreferenceConstants.STRIP_REFLECTION), prefs.get(PreferenceConstants.STRIP_REFLECTION));
         prj.setPersistentProperty(qkey(PreferenceConstants.STRIP_GWT_INCOMPATIBLE), prefs.get(PreferenceConstants.STRIP_GWT_INCOMPATIBLE));
         prj.setPersistentProperty(qkey(PreferenceConstants.SEGMENTED_HEADERS), prefs.get(PreferenceConstants.SEGMENTED_HEADERS));
+
+        /* Changes from 0.9.6 */
+        prj.setPersistentProperty(qkey(PreferenceConstants.DOC_COMMENTS), prefs.get(PreferenceConstants.DOC_COMMENTS));
+        prj.setPersistentProperty(qkey(PreferenceConstants.EXTRACT_UNSEQUENCED), prefs.get(PreferenceConstants.EXTRACT_UNSEQUENCED));
     }
 
     /**

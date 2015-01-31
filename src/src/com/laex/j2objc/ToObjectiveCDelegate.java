@@ -147,9 +147,6 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         if (PropertiesUtil.hasProperty(PreferenceConstants.USE_ARC, prefs))
             sb.append(PreferenceConstants.USE_ARC).append(" ");
 
-        if (PropertiesUtil.hasProperty(PreferenceConstants.USE_GC, prefs))
-            sb.append(PreferenceConstants.USE_GC).append(" ");
-
         if (PropertiesUtil.hasProperty(PreferenceConstants.ERROR_TO_WARNING, prefs))
             sb.append(PreferenceConstants.ERROR_TO_WARNING).append(" ");
 
@@ -159,24 +156,11 @@ public class ToObjectiveCDelegate implements IResourceVisitor {
         if (PropertiesUtil.hasProperty(PreferenceConstants.VERBOSE, prefs))
             sb.append(PreferenceConstants.VERBOSE).append(" ");
 
-        /* Ignore INLINE FIELD ACCESS. This property is no longer present in 0.8.7 */
-//        if (PropertiesUtil.hasProperty(PreferenceConstants.NO_INLINE_FIELD_ACCESS, prefs))
-//            sb.append(PreferenceConstants.NO_INLINE_FIELD_ACCESS).append(" ");
+        if (PropertiesUtil.hasProperty(PreferenceConstants.DOC_COMMENTS, prefs))
+            sb.append(PreferenceConstants.DOC_COMMENTS).append(" ");
 
-        if (PropertiesUtil.hasProperty(PreferenceConstants.NO_GENERATE_TEST_MAIN, prefs))
-            sb.append(PreferenceConstants.NO_GENERATE_TEST_MAIN).append(" ");
-
-        if (PropertiesUtil.hasProperty(PreferenceConstants.IGNORE_MISSING_IMPORTS, prefs))
-            sb.append(PreferenceConstants.IGNORE_MISSING_IMPORTS).append(" ");
-
-        if (PropertiesUtil.hasProperty(PreferenceConstants.PRINT_CONVERTED_SOURCES, prefs))
-            sb.append(PreferenceConstants.PRINT_CONVERTED_SOURCES).append(" ");
-
-        if (PropertiesUtil.hasProperty(PreferenceConstants.MEM_DEBUG, prefs))
-            sb.append(PreferenceConstants.MEM_DEBUG).append(" ");
-
-        if (PropertiesUtil.hasProperty(PreferenceConstants.GENERATE_NATIVE_STUBS, prefs))
-            sb.append(PreferenceConstants.GENERATE_NATIVE_STUBS).append(" ");
+        if (PropertiesUtil.hasProperty(PreferenceConstants.EXTRACT_UNSEQUENCED, prefs))
+            sb.append(PreferenceConstants.EXTRACT_UNSEQUENCED).append(" ");
 
         if (PropertiesUtil.hasProperty(PreferenceConstants.TIMING_INFO, prefs))
             sb.append(PreferenceConstants.TIMING_INFO).append(" ");
