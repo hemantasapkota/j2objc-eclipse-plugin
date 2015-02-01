@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: J2objc-eclipse-plugin
 Bundle-SymbolicName: j2objc-eclipse-plugin;singleton:=true
-Bundle-Version: 1.6.1
+Bundle-Version: 1.6.2
 Bundle-Activator: j2objc_eclipse_plugin.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -15,7 +15,6 @@ Require-Bundle: org.eclipse.ui,
  org.apache.ant;bundle-version="1.8.3",
  org.apache.commons.lang;bundle-version="2.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.commons.io,
- org.eclipse.ui.dialogs
+Import-Package: org.eclipse.ui.dialogs
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Hemanta Sapkota

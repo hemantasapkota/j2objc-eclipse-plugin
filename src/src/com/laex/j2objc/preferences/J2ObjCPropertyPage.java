@@ -61,9 +61,6 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
     /** The btn mem manual ref. */
     private Button btnMemManualRef;
 
-    /** The btn mem gc. */
-    private Button btnMemGC;
-
     /** The btn make errors to warnings. */
     private Button btnMakeErrorsToWarnings;
 
@@ -73,15 +70,6 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
     /** The btn verbose. */
     private Button btnVerbose;
 
-    /** The btn no inline field access. */
-    private Button btnNoInlineFieldAccess;
-
-    /** The btn no generate test main. */
-    private Button btnNoGenerateTestMain;
-
-    /** The btn print converted sources. */
-    private Button btnPrintConvertedSources;
-
     /** The btn timing info. */
     private Button btnTimingInfo;
 
@@ -90,9 +78,6 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The grp others. */
     private Group grpOthers;
-
-    /** The btn ignore missing imports. */
-    private Button btnIgnoreMissingImports;
 
     /** The txt proguard file. */
     private Text txtProguardFile;
@@ -114,12 +99,6 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The lbl proguard dead code. */
     private Label lblProguardDeadCode;
-
-    /** The btn mem debug. */
-    private Button btnMemDebug;
-
-    /** The btn generate native stubs. */
-    private Button btnGenerateNativeStubs;
     
     /** The tbtm new item. */
     private TabItem tbtmNewItem;
@@ -150,6 +129,12 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
     /** The btn segmented headers. */
     private Button btnSegmentedHeaders;
+
+    /** The btn doc comments. */
+    private Button btnDocComments;
+    
+    /** The btn extract unsequenced. */
+    private Button btnExtractUnsequenced;
 
     /**
      * Instantiates a new j2 obj c property page.
@@ -209,8 +194,6 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
                 btnMemManualRef = new Button(grpMemoryManagement, SWT.RADIO);
                 btnMemManualRef.setText("Generate Objective-C code to support iOS manual reference counting");
 
-                btnMemGC = new Button(grpMemoryManagement, SWT.RADIO);
-                btnMemGC.setText("Generate Objective-C code to support garbage collection (requires libjre_emul.a rebuild)");
                 {
                     btnMemARC = new Button(grpMemoryManagement, SWT.RADIO);
                     btnMemARC.setText("Generate Objective-C code to support Automatic Reference Counting (ARC)");
@@ -256,42 +239,12 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
                     btnBuildClosure.setText("Translate dependent classes if out-of-date ( build-closure )");
                 }
                 {
-                    btnNoInlineFieldAccess = new Button(grpOthers, SWT.CHECK);
-                    btnNoInlineFieldAccess.setEnabled(false);
-                    btnNoInlineFieldAccess.setText("Turn off in-lining of generated field accessors.");
-                }
-                {
-                    btnNoGenerateTestMain = new Button(grpOthers, SWT.CHECK);
-                    btnNoGenerateTestMain.setText("Turn off automatically generated main method for JUnit tests");
-                }
-                {
-                    btnIgnoreMissingImports = new Button(grpOthers, SWT.CHECK);
-                    btnIgnoreMissingImports.setText("Continue translation if an imported class is not found on the class or source paths");
-                }
-                {
-                    btnPrintConvertedSources = new Button(grpOthers, SWT.CHECK);
-                    btnPrintConvertedSources.setText("Print input source files after initial conversion");
-                }
-                {
                     btnTimingInfo = new Button(grpOthers, SWT.CHECK);
                     btnTimingInfo.setText("Print time spent in translation steps");
                 }
                 {
                     btnGenerateDeprecated = new Button(grpOthers, SWT.CHECK);
                     btnGenerateDeprecated.setText("Generate deprecated attributes for deprecated methods, classes and interfaces.");
-                }
-                {
-                    btnMemDebug = new Button(grpOthers, SWT.CHECK);
-                    btnMemDebug.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                        }
-                    });
-                    btnMemDebug.setText("Generate code to display memory allocation graphs");
-                }
-                {
-                    btnGenerateNativeStubs = new Button(grpOthers, SWT.CHECK);
-                    btnGenerateNativeStubs.setText("Generate method bodies for native methods that do not have OCNI native code");
                 }
                 {
                     btnStripReflection = new Button(grpOthers, SWT.CHECK);
@@ -305,6 +258,14 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
                 {
                     btnSegmentedHeaders = new Button(grpOthers, SWT.CHECK);
                     btnSegmentedHeaders.setText("Generates headers with guards around each declared type. Useful for breaking import cycles.");
+                }
+                {
+                    btnDocComments = new Button(grpOthers, SWT.CHECK);
+                    btnDocComments.setText("Translate Javadoc comments into Xcode-compatible comments.");
+                }
+                {
+                    btnExtractUnsequenced = new Button(grpOthers, SWT.CHECK);
+                    btnExtractUnsequenced.setText("Rewrite expressions that would produce unsequenced modification errors.");
                 }
             }
             {
@@ -490,19 +451,11 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
         btnMemManualRef.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.USE_REFERENCE_COUNTING)));
         btnMemARC.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.USE_ARC)));
-        btnMemGC.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.USE_GC)));
 
         btnMakeErrorsToWarnings.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.ERROR_TO_WARNING)));
         btnQuiet.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.QUIET)));
         btnVerbose.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.VERBOSE)));
 
-        btnMemDebug.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.MEM_DEBUG)));
-        btnGenerateNativeStubs.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS)));
-
-        btnNoInlineFieldAccess.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.NO_INLINE_FIELD_ACCESS)));
-        btnNoGenerateTestMain.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.NO_GENERATE_TEST_MAIN)));
-        btnIgnoreMissingImports.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS)));
-        btnPrintConvertedSources.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES)));
         btnTimingInfo.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.TIMING_INFO)));
 
         /* 0.8.7 changes */
@@ -511,6 +464,10 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnStripReflection.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.STRIP_REFLECTION)));
         btnGwtIncompatible.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.STRIP_GWT_INCOMPATIBLE)));
         btnSegmentedHeaders.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.SEGMENTED_HEADERS)));
+
+        /* 0.9.6 changes */
+        btnDocComments.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.DOC_COMMENTS)));
+        btnExtractUnsequenced.setSelection(Boolean.parseBoolean(defaultPrefs.get(PreferenceConstants.EXTRACT_UNSEQUENCED)));
     }
 
     /**
@@ -533,22 +490,11 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         // Memory OPtions
         prefMap.put(PreferenceConstants.USE_REFERENCE_COUNTING, Boolean.toString(btnMemManualRef.getSelection()));
         prefMap.put(PreferenceConstants.USE_ARC, Boolean.toString(btnMemARC.getSelection()));
-        prefMap.put(PreferenceConstants.USE_GC, Boolean.toString(btnMemGC.getSelection()));
 
         prefMap.put(PreferenceConstants.ERROR_TO_WARNING, Boolean.toString(btnMakeErrorsToWarnings.getSelection()));
         prefMap.put(PreferenceConstants.QUIET, Boolean.toString(btnQuiet.getSelection()));
         prefMap.put(PreferenceConstants.VERBOSE, Boolean.toString(btnVerbose.getSelection()));
-
-        prefMap.put(PreferenceConstants.NO_INLINE_FIELD_ACCESS, Boolean.toString(btnNoInlineFieldAccess.getSelection()));
-        prefMap.put(PreferenceConstants.NO_GENERATE_TEST_MAIN, Boolean.toString(btnNoGenerateTestMain.getSelection()));
-        prefMap.put(PreferenceConstants.IGNORE_MISSING_IMPORTS, Boolean.toString(btnIgnoreMissingImports.getSelection()));
-        prefMap.put(PreferenceConstants.PRINT_CONVERTED_SOURCES, Boolean.toString(btnPrintConvertedSources.getSelection()));
         prefMap.put(PreferenceConstants.TIMING_INFO, Boolean.toString(btnTimingInfo.getSelection()));
-
-        // new optios added from j2objc 0.6
-        prefMap.put(PreferenceConstants.MEM_DEBUG, Boolean.toString(btnMemDebug.getSelection()));
-        prefMap.put(PreferenceConstants.GENERATE_NATIVE_STUBS, Boolean.toString(btnGenerateNativeStubs.getSelection()));
-        // end new options
 
         prefMap.put(PreferenceConstants.DEAD_CODE_REPORT, txtProguardFile.getText());
         prefMap.put(PreferenceConstants.METHOD_MAPPING_FILE, txtMethodMappingFile.getText());
@@ -561,6 +507,9 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         prefMap.put(PreferenceConstants.STRIP_GWT_INCOMPATIBLE, Boolean.toString(btnGwtIncompatible.getSelection()));
         prefMap.put(PreferenceConstants.SEGMENTED_HEADERS, Boolean.toString(btnSegmentedHeaders.getSelection()));
         
+        /* 0.9.6 */
+        prefMap.put(PreferenceConstants.DOC_COMMENTS, Boolean.toString(btnDocComments.getSelection()));
+        prefMap.put(PreferenceConstants.EXTRACT_UNSEQUENCED, Boolean.toString(btnExtractUnsequenced.getSelection()));
 
         return prefMap;
     }
@@ -581,20 +530,11 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
 
         btnMemManualRef.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.USE_REFERENCE_COUNTING)));
         btnMemARC.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.USE_ARC)));
-        btnMemGC.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.USE_GC)));
 
         btnMakeErrorsToWarnings.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.ERROR_TO_WARNING)));
         btnQuiet.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.QUIET)));
         btnVerbose.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.VERBOSE)));
-
-        btnNoInlineFieldAccess.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.NO_INLINE_FIELD_ACCESS)));
-        btnNoGenerateTestMain.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.NO_GENERATE_TEST_MAIN)));
-        btnIgnoreMissingImports.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.IGNORE_MISSING_IMPORTS)));
-        btnPrintConvertedSources.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.PRINT_CONVERTED_SOURCES)));
         btnTimingInfo.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.TIMING_INFO)));
-
-        btnMemDebug.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.MEM_DEBUG)));
-        btnGenerateNativeStubs.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.GENERATE_NATIVE_STUBS)));
 
         txtProguardFile.setText(prefs.get(PreferenceConstants.DEAD_CODE_REPORT));
         txtMethodMappingFile.setText(prefs.get(PreferenceConstants.METHOD_MAPPING_FILE));
@@ -605,5 +545,8 @@ public class J2ObjCPropertyPage extends PropertyPage implements IWorkbenchProper
         btnStripReflection.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.STRIP_REFLECTION)));
         btnGwtIncompatible.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.STRIP_GWT_INCOMPATIBLE)));
         btnSegmentedHeaders.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.SEGMENTED_HEADERS)));
+
+        btnDocComments.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.DOC_COMMENTS)));
+        btnExtractUnsequenced.setSelection(Boolean.parseBoolean(prefs.get(PreferenceConstants.EXTRACT_UNSEQUENCED)));
     }
 }

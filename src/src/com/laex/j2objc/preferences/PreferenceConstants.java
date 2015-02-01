@@ -45,9 +45,6 @@ public class PreferenceConstants {
     /** The Constant USE_REFERENCE_COUNTING. */
     public static final String USE_REFERENCE_COUNTING = "-use-reference-counting";
 
-    /** The Constant USE_GC. */
-    public static final String USE_GC = "-use-gc";
-
     /** The Constant USE_ARC. */
     public static final String USE_ARC = "-use-arc";
 
@@ -77,24 +74,6 @@ public class PreferenceConstants {
 
     /** The Constant DEAD_CODE_REPORT. */
     public static final String DEAD_CODE_REPORT = "--dead-code-report";
-    
-    /** The Constant MEM_DEBUG. */
-    public static final String MEM_DEBUG = "--mem-debug";
-    
-     /** The Constant GENERATE_NATIVE_STUBS. */
-    public static final String GENERATE_NATIVE_STUBS = "--generate-native-stubs";
-
-    /** The Constant NO_INLINE_FIELD_ACCESS. */
-    public static final String NO_INLINE_FIELD_ACCESS = "--no-inline-field-access";
-
-    /** The Constant NO_GENERATE_TEST_MAIN. */
-    public static final String NO_GENERATE_TEST_MAIN = "--no-generate-test-main";
-
-    /** The Constant IGNORE_MISSING_IMPORTS. */
-    public static final String IGNORE_MISSING_IMPORTS = "--ignore-missing-imports";
-
-    /** The Constant PRINT_CONVERTED_SOURCES. */
-    public static final String PRINT_CONVERTED_SOURCES = "--print-converted-sources";
 
     /** The Constant TIMING_INFO. */
     public static final String TIMING_INFO = "--timing-info";
@@ -123,6 +102,16 @@ public class PreferenceConstants {
     public static final String SEGMENTED_HEADERS = "--segmented-headers";
 
     /* End changes from 0.8.7 */
+    
+    /* Changes from 0.9.6 */
+    
+    /** The Constant DOC_COMMENTS. */
+    public static final String DOC_COMMENTS = "--doc-comments";
+    
+    /** The Constant EXTRACT_UNSEQUENCED. */
+    public static final String EXTRACT_UNSEQUENCED = "--extract-unsequenced";
+    
+    /* End changes from 0.9.6 */
 
     /** The Constant HELP. */
     public static final String HELP = "--help";
