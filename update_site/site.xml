@@ -3,7 +3,7 @@
    <description name="J2OBJC Eclipse Plugin" url="https://raw.github.com/hemantasapkota/j2objc-eclipse-plugin/master/update_site">
       J2OBJC Eclipse Plugin Update Site
    </description>
-   <feature url="features/j2objc_eclipse_feature_1.6.1.jar" id="j2objc_eclipse_feature" version="1.6.1" os="linux,macosx" ws="cocoa,gtk">
+   <feature url="features/j2objc_eclipse_feature_1.7.0.jar" id="j2objc_eclipse_feature" version="1.7" os="linux,macosx" ws="cocoa,gtk">
       <category name="J2OBJC.category"/>
    </feature>
    <category-def name="J2OBJC.category" label="J2ObjC Eclipse Plugin">

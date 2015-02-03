@@ -2,7 +2,7 @@
 <feature
       id="j2objc_eclipse_feature"
       label="J2OBJC Plugin Feature"
-      version="1.6.1"
+      version="1.7"
       provider-name="Hemanta Sapkota"
       os="linux,macosx"
       ws="cocoa,gtk">
